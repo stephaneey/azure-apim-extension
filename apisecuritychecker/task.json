@@ -1,0 +1,35 @@
+{
+  "id": "2122de77-e114-41aa-973c-2daff243677a",
+  "name": "apisecuritychecker",
+  "friendlyName": "API Security Checker",
+  "description": "Makes sure all endpoints are secured",
+  "author": "Stephane Eyskens",
+  "helpMarkDown": "Makes sure all endpoints are secured",
+  "category": "Utility",
+  "visibility": [
+    "Release"
+  ],
+  "demands": [],
+  "version": {
+    "Major": "1",
+    "Minor": "0",
+    "Patch": "1"
+  },
+  "minimumAgentVersion": "1.95.0",
+  "instanceNameFormat": "API Security Checker $(message)",
+  "inputs": [
+    {
+      "name": "swaggerlocation",
+      "type": "string",
+      "label": "Swagger Location URL",
+      "required": true,
+      "helpMarkDown": "",
+      "defaultValue": ""
+    }
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "apisecuritychecker.ps1"
+    }
+  }
+}
