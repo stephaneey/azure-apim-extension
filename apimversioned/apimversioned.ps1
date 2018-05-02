@@ -187,7 +187,7 @@ shared VNET
 				}		
 				else
 				{
-					$importurl="$($baseurl)/apis/$($newapi)?import=true&api-version=2017-03-01"
+					$importurl="$($baseurl)/apis/$($newapi)$($v)?import=true&api-version=2017-03-01"
 				}
 				$headers.Add("If-Match","*")		
 				#reapplying swagger
