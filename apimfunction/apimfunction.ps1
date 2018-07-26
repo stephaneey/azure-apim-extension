@@ -19,7 +19,7 @@ for each and every function to inject the function's code as query string parame
 		$functiongroup=Get-VstsInput -Name ResourceGroupName 		
 		$functionsite=Get-VstsInput -Name HostingWebSite
 		$product=Get-VstsInput -Name product1 
-		
+		$path = Get-VstsInput -Name pathapi
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
 		if($SelectedTemplate -eq "CORS")
@@ -118,7 +118,8 @@ for each and every function to inject the function's code as query string parame
 			"properties": {
 				"contentFormat": "swagger-link-json",
 				"contentValue": "'+"https://$($functionsite).azurewebsites.net/admin/host/swagger/default?code=$($keyjson.value)"+'",
-				"path": "'+$($newapi)+'"
+				"displayName": "'+$($newapi)+'",
+				"path": "'+$($path)+'",
 			}
 		}'
 		write-host $json

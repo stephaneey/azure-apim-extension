@@ -13,7 +13,7 @@
   "version": {
     "Major": "1",
     "Minor": "0",
-    "Patch": "1"
+    "Patch": "2"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API $(message)",
@@ -75,6 +75,13 @@
       "label": "API Name",
       "required": true,
       "helpMarkDown": "New or existing API"
+    },
+    {
+      "name": "pathapi",
+      "type": "string",
+      "label": "API URL suffix",
+      "required": true,
+      "helpMarkDown": "API URL suffix"
     },
     {
       "name": "version",

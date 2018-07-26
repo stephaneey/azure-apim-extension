@@ -20,7 +20,7 @@ Prerequisite to using this task: VSTS agents must be able to connect to both the
 		$functiongroup=Get-VstsInput -Name ResourceGroupName 		
 		$functionsite=Get-VstsInput -Name HostingWebSite
 		$product=Get-VstsInput -Name product1 
-		
+		$path = Get-VstsInput -Name pathapi
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
 	if($SelectedTemplate -eq "CacheLookup")
@@ -161,7 +161,7 @@ Prerequisite to using this task: VSTS agents must be able to connect to both the
 				  "properties":
 				  { 
 					"displayName":"'+$($newapi)+'",
-					 "path":"'+$($newapi)+'",
+					 "path":"'+$($path)+'",
 					 "protocols":["https"],
 					 "apiVersion":"v1",
 					 "apiVersionSet":{

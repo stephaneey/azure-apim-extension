@@ -18,6 +18,7 @@ shared VNET
 		$product=Get-VstsInput -Name product1 
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
+		$path = Get-VstsInput -Name pathapi
 		if($SelectedTemplate -eq "CacheLookup")
 		{
 			$PolicyContent = Get-VstsInput -Name CacheLookup
@@ -85,7 +86,8 @@ shared VNET
 			"properties": {
 				"contentFormat": "swagger-link-json",
 				"contentValue": "'+$($SwaggerLocation)+'",
-				"path": "'+$($newapi)+'"
+				"displayName": "'+$($newapi)+'",
+				"path": "'+$($path)+'",
 			}
 		}'
 		write-host $json
