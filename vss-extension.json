@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "apim",
   "name": "API Management Suite",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "publisher": "stephane-eyskens",
   "tags": [
     "API",
