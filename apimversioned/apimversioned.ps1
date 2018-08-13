@@ -17,6 +17,7 @@ shared VNET
 		{
 			$newapi=$newapi.substring($newapi.indexOf("/apis")+6)
 		}
+		$path = Get-VstsInput -Name pathapi
 		$v=Get-VstsInput -Name version
 		$portal=Get-VstsInput -Name ApiPortalName
 		$rg=Get-VstsInput -Name ResourceGroupName 
@@ -135,7 +136,7 @@ shared VNET
 				  "properties":
 				  { 
 					"displayName":"'+$($newapi)+'",
-					 "path":"'+$($newapi)+'",
+					 "path":"'+$($path)+'",
 					 "protocols":["https"],
 					 "apiVersion":"v1",
 					 "apiVersionSet":{
