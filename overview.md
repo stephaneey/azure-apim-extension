@@ -1,4 +1,4 @@
-# azure-apim-extension
+﻿# azure-apim-extension
 Full Azure API Management suite and more VSTS extension
 # Disclaimer
 This software is provided as-is with no warranty of any kind. 
@@ -13,7 +13,8 @@ ships with an API Security Checker that helps validating that all endpoints of a
 * Supports both API and Product policies
 * Supports the creation of APIs on top of Azure Functions
 * API Security checker
-
+## V1.0.1/2
+Update of the documentation.
 
 # Setup prerequisite and considerations
 In order to use this extension, you must have an ARM Service Endpoint configured in VSTS and make sure this endpoint is allowed to contribute to API Management instances. This can easily 
