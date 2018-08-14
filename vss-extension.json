@@ -13,7 +13,7 @@
       "path": "overview.md"
     }
   },
-  "public": false,
+  "public": true,
   "links": {
     "getstarted": {
       "uri": "https://github.com/stephaneey/azure-apim-extension"
