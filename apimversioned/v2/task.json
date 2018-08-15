@@ -13,7 +13,7 @@
   "version": {
     "Major": "2",
     "Minor": "0",
-    "Patch": "0"
+    "Patch": "1"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API $(message)",
@@ -156,6 +156,7 @@
         "None": "None",
         "CacheLookup": "Cache Lookup",
         "CORS": "CORS",
+        "Custom": "Custom",
         "Basic": "Basic",
         "JWT": "JWT",
         "IP": "IP",
@@ -171,6 +172,14 @@
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "helpMarkDown": "",
       "visibleRule": "TemplateSelector = NAN"
+    },
+    {
+      "name": "Custom",
+      "type": "multiline",
+      "label": "None",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "helpMarkDown": "",
+      "visibleRule": "TemplateSelector = Custom"
     },
     {
       "name": "CacheLookup",

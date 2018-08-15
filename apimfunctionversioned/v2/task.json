@@ -13,7 +13,7 @@
   "version": {
     "Major": "2",
     "Minor": "0",
-    "Patch": "0"
+    "Patch": "1"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update versioned API on Function $(message)",
@@ -126,6 +126,7 @@
         "None": "None",
         "CacheLookup": "Cache Lookup",
         "CORS": "CORS",
+        "Custom": "Custom",
         "Basic": "Basic",
         "JWT": "JWT",
         "IP": "IP",
@@ -143,8 +144,16 @@
       "visibleRule": "TemplateSelector = NAN"
     },
     {
+      "name": "Custom",
+      "type": "multiline",
+      "label": "None",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "helpMarkDown": "",
+      "visibleRule": "TemplateSelector = Custom"
+    },
+    {
       "name": "CacheLookup",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -153,7 +162,7 @@
     },
     {
       "name": "Basic",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<authentication-basic username='username' password='password' />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -162,7 +171,7 @@
     },
     {
       "name": "CORS",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<cors>\n\t\t\t<allowed-origins><origin>*</origin></allowed-origins>\n\t\t\t<allowed-methods><method>*</method></allowed-methods>\n\t\t\t<allowed-headers><header>*</header></allowed-headers>\n\t\t</cors>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -171,7 +180,7 @@
     },
     {
       "name": "JWT",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<validate-jwt header-name='Insert HTTP Header Name here' failed-validation-httpcode='401' failed-validation-error-message='Unauthorized'>\n\t\t\t<issuer-signing-keys><key>Base64 Encoded Key 1</key>\n\t\t\t</issuer-signing-keys>\n\t\t\t<audiences><audience>Audience 1</audience>\n\t\t\t</audiences>\n\t\t<issuers>\n\t\t\t<issuer>Issuer 1</issuer>\n\t\t</issuers>\n\t\t<required-claims><claim name='claim1' match='all'><value>value1</value><value>value2</value></claim>\n\t\t\t</required-claims>\n\t\t</validate-jwt>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -180,7 +189,7 @@
     },
     {
       "name": "IP",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<ip-filter action='allow | forbid'>\n\t\t\t<address>address</address>\n\t\t\t<address-range from='address' to='address' />\n\t\t</ip-filter>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -189,7 +198,7 @@
     },
     {
       "name": "RateByKey",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<rate-limit-by-key calls='5' renewal-period='60' counter-key='@(context.Request.IpAddress)'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -198,7 +207,7 @@
     },
     {
       "name": "QuotaByKey",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<quota-by-key calls='10000' bandwidth='40000' renewal-period='3600'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -207,7 +216,7 @@
     },
     {
       "name": "HeaderCheck",
-      "type": "string",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<check-header name='header name' failed-check-httpcode='http status code to return on failure' failed-check-error-message='error message to return' ignore-case='true | false'>\n\t\t\t<value>value</value>\n\t\t</check-header>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,

@@ -55,6 +55,10 @@ Prerequisite to using this task: VSTS agents must be able to connect to both the
 		{
 			$PolicyContent = Get-VstsInput -Name HeaderCheck
 		}
+		if($SelectedTemplate -eq "Custom")
+		{
+			$PolicyContent = Get-VstsInput -Name Custom
+		}
 		if($PolicyContent -ne $null -and $PolicyContent -ne "")
 		{
 			$PolicyContent = $PolicyContent.replace("`"","`'")

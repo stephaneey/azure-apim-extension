@@ -55,6 +55,10 @@ for each and every function to inject the function's code as query string parame
 		{
 			$PolicyContent = Get-VstsInput -Name HeaderCheck
 		}
+		if($SelectedTemplate -eq "Custom")
+		{
+			$PolicyContent = Get-VstsInput -Name Custom
+		}
 		if($PolicyContent -ne $null -and $PolicyContent -ne "")
 		{
 			$PolicyContent = $PolicyContent.replace("`"","`'")

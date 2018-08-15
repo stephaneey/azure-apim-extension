@@ -53,10 +53,15 @@ shared VNET
 		{
 			$PolicyContent = Get-VstsInput -Name HeaderCheck
 		}
+		if($SelectedTemplate -eq "Custom")
+		{
+			$PolicyContent = Get-VstsInput -Name Custom
+		}
 		if($PolicyContent -ne $null -and $PolicyContent -ne "")
 		{
 			$PolicyContent = $PolicyContent.replace("`"","`'")
-		}		
+		}	
+		
 
 	#preparing endpoints	
 		$client=$Endpoint.Auth.Parameters.ServicePrincipalId
