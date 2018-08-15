@@ -7,7 +7,15 @@ The purpose of this extension is to bring Azure API Management into VSTS as part
 is good to associate the release of your backends APIs with their corresponding facade APIs published against the API Gateway. On top of the API Management integration, the extension also 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
-## v2.0
+## v2.0 - new features
+The below features were added.
+
+* Versioning Scheme (Segment, Query String, HTTP Header)
+* Inline Swagger
+* API Suffix
+## v2.0 - bug fixes
+* Switched the input type from "string" to "multiline" for policies
+* Added a new policy of type "custom"
 The below features were added.
 
 * Versioning Scheme (Segment, Query String, HTTP Header)
