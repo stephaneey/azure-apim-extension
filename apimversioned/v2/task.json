@@ -12,7 +12,7 @@
   "demands": [],
   "version": {
     "Major": "2",
-    "Minor": "0",
+    "Minor": "2",
     "Patch": "1"
   },
   "minimumAgentVersion": "1.95.0",
@@ -70,7 +70,8 @@
       "defaultValue": "Url",
       "options": {
         "Url": "Url",
-        "Code":"Code"
+        "Code":"Code",
+        "Artifact":"Build Artifact"
       }
     },
     {
@@ -81,6 +82,15 @@
       "helpMarkDown": "Make sure the URL is connectable from the build servers",
       "defaultValue": "",
       "visibleRule": "SwaggerPicker=Url"
+    },
+    {
+      "name": "swaggerartifact",
+      "type": "string",
+      "label": "Swagger Artifact",
+      "required": true,
+      "helpMarkDown": "Swagger Artifact. For instance $(System.DefaultWorkingDirectory)/<yourswagger.json>",
+      "defaultValue": "",
+      "visibleRule": "SwaggerPicker=Artifact"
     },
     {
       "name": "swaggercode",

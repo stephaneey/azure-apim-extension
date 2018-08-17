@@ -17,6 +17,7 @@ shared VNET
 		$SwaggerPicker = Get-VstsInput -Name SwaggerPicker 
 		$swaggerlocation=Get-VstsInput -Name swaggerlocation
 		$swaggercode=Get-VstsInput -Name swaggercode 
+		$swaggerartifact=Get-VstsInput -Name swaggerartifact
 		$product=Get-VstsInput -Name product1 
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
@@ -90,28 +91,47 @@ shared VNET
 			Authorization = "Bearer $($resp.access_token)"        
 		}
 		$json = ""
-		if($SwaggerPicker -eq "Url")
-		{
-			$json = '{
-			"properties": {
-				"contentFormat": "swagger-link-json",
-				"contentValue": "'+$($SwaggerLocation)+'",
-				"displayName": "'+$($newapi)+'",
-				"path": "'+$($path)+'"
-			}
-			}'
-		}
-		else
-		{
-			$json = '{
-			"properties": {
-				"contentFormat": "swagger-json",
-				"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
-				"displayName": "'+$($newapi)+'",
-				"path": "'+$($path)+'"
-			}
-			}'
-		}
+		switch($SwaggerPicker)
+			{
+				"Url" {
+					$json = '{
+						"properties": {
+						"contentFormat": "swagger-link-json",
+						"contentValue": "'+$($SwaggerLocation)+'",
+						"displayName": "'+$($newapi)+'",
+						"path": "'+$($path)+'"
+					}
+					}'
+				}
+				"Artifact" {
+					try {
+ 						Assert-VstsPath -LiteralPath $swaggerartifact -PathType Leaf
+ 						$swaggercode = Get-Content "$($swaggerartifact)"
+						$json = '{
+							"properties": {
+							"contentFormat": "swagger-json",
+							"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
+							"displayName": "'+$($newapi)+'",
+							"path": "'+$($path)+'"
+						 }
+						}'
+					} catch {
+  						Write-Error "Invalid file location $($swaggerartifact)"
+					}
+				}
+				"Code" {					
+					$json = '{
+						"properties": {
+						"contentFormat": "swagger-json",
+						"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
+						"displayName": "'+$($newapi)+'",
+						"path": "'+$($path)+'"
+					 }
+					}'
+				}
+				default {Write-Error "Invalid swagger definition"}
+			}		
+		
 		
 		write-host $json
 		$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"

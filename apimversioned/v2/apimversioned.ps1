@@ -33,6 +33,7 @@ shared VNET
 		$SwaggerPicker = Get-VstsInput -Name SwaggerPicker 
 		$swaggerlocation=Get-VstsInput -Name swaggerlocation
 		$swaggercode=Get-VstsInput -Name swaggercode 
+		$swaggerartifact = Get-VstsInput -Name swaggerartifact
 		$product=Get-VstsInput -Name product1 
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$path = Get-VstsInput -Name pathapi
@@ -131,17 +132,26 @@ shared VNET
 		
 		try
 		{
-			if($SwaggerPicker -eq "Url")
+			switch($SwaggerPicker)
 			{
-				#downloading swagger for later import
-				$cli=[System.Net.WebClient]::new()
-				$swagger=$cli.DownloadString($swaggerlocation)				
-				$cli.Dispose()
-			}
-			else
-			{
-				$swagger=$swaggercode
-			}
+				"Url" {
+					$cli=[System.Net.WebClient]::new()
+					$swagger=$cli.DownloadString($swaggerlocation)				
+					$cli.Dispose()
+				}
+				"Artifact" {
+					try {
+ 						Assert-VstsPath -LiteralPath $swaggerartifact -PathType Leaf
+ 						$swagger = Get-Content "$($swaggerartifact)"
+					} catch {
+  						Write-Error "Invalid file location $($swaggerartifact)"
+					}
+				}
+				"Code" {
+					$swagger=$swaggercode
+				}
+				default {Write-Error "Invalid swagger definition"}
+			}		
 			
 
 			if($apiexists -eq $false)

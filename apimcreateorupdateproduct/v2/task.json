@@ -47,7 +47,7 @@
     {
       "name": "product",
       "type": "pickList",
-      "label": "product",
+      "label": "Product",
       "required": false,
       "helpMarkDown": "Add or update a product. Choose new name for a new product",
       "properties": {
