@@ -105,8 +105,10 @@ This task creates an APIM product.
 		{
 			$displayName=$product
 		}
-		Write-Host "DisplayName is $($displayName)"
 
+		Write-Host "DisplayName is $($displayName)"
+		if ($subscriptionRequired -eq 'true')
+		{
 			$json = '{
 			"properties": {
 				"displayName": "'+$displayName+'",
@@ -115,7 +117,19 @@ This task creates an APIM product.
 			"subscriptionsLimit":'+$subscriptionsLimit+',
 			"state":"'+$state+'",
 			}
-		   }'		
+		   }'	
+		}
+		else
+		{
+			$json = '{
+			"properties": {
+				"displayName": "'+$displayName+'",
+				"subscriptionRequired": '+$subscriptionRequired+',			
+				"state":"'+$state+'",
+				}
+		   }'
+		}
+				
 		
 		Write-Host $json
 		try
