@@ -37,6 +37,16 @@ shared VNET
 		$product=Get-VstsInput -Name product1 
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$path = Get-VstsInput -Name pathapi
+		$Authorization = Get-VstsInput -Name Authorization
+		$oid = Get-VstsInput -Name oid
+		$oauth = Get-VstsInput -Name oauth
+		$AuthorizationBits='"authenticationSettings":null'
+		switch($Authorization)
+		{
+			'OAuth' {$AuthorizationBits='"authenticationSettings":{"oAuth2":{"authorizationServerId":"'+$oauth+'","scope":null}}'}
+			'OpenID' {$AuthorizationBits='"authenticationSettings":{"openid":{"openidProviderId":"'+$oid+'"}}'}
+			
+		}
 		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
 		if($SelectedTemplate -eq "CacheLookup")
 		{
@@ -169,7 +179,7 @@ shared VNET
 				  "name":"'+$($newapi)+'",
 				  "properties":
 				  { 
-					"displayName":"'+$($newapi)+'",
+					"displayName":"'+$($newapi)+'",'+$AuthorizationBits+',
 					 "path":"'+$($path)+'",
 					 "protocols":["https"],
 					 "apiVersion":"v1",
@@ -212,19 +222,35 @@ shared VNET
 					{
 						throw
 					}
-				}
+				}			
 				Write-Host "current version $($currentversion), version is $($v), version exists $($versionexists)"
 				if($currentversion -ne $v -and $versionexists -eq $false)
 				{
 					Write-Host "Creating a new version $($newversionurl) with $($json)"
 					Invoke-WebRequest -UseBasicParsing $newversionurl -Method Put -ContentType "application/vnd.ms-azure-apim.revisioninfo+json" -Body $json -Headers $headers
-					$importurl="$($baseurl)/apis/$($newapi)$($v)?import=true&api-version=2017-03-01"
+					$importurl="$($baseurl)/apis/$($newapi)$($v)?import=true&api-version=2017-03-01"	
+					$authurl = "$($baseurl)/apis/$($newapi)$($v)?api-version=2018-01-01"				
 				}		
 				else
 				{
 					$importurl="$($baseurl)/apis/$($newapi)?import=true&api-version=2017-03-01"
+					if($currentversion -ne $v)
+					{
+						$authurl = "$($baseurl)/apis/$($newapi)$($v)?api-version=2018-01-01"			
+					}
+					else {
+						$authurl = "$($baseurl)/apis/$($newapi)?api-version=2018-01-01"
+					}
+					
 				}
-				$headers.Add("If-Match","*")		
+				$headers.Add("If-Match","*")	
+				Write-Host "applying authorization"				
+				
+				$json='{"name":"'+$newapi+'","properties":{'+$AuthorizationBits+',"apiVersion":"'+$v+'"}}'
+				Write-Host "Authorization json $($json)"
+				Write-Host "endpoint is $($authurl) headers are $($headers)"
+				Invoke-WebRequest -UseBasicParsing -Uri $authurl -Headers $headers -Method "PATCH" -ContentType "application/json" -Body $json
+				Write-Host "applied authorization"
 				#reapplying swagger
 				
 				Write-Host "Importing swagger $($importurl)"
@@ -293,6 +319,8 @@ shared VNET
 				throw
 			}
 		}
+		Write-Host "Setting up authorization"
+		
 		Write-Host $rep
 
 } finally {

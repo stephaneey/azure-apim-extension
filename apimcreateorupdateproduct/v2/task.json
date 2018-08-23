@@ -13,7 +13,7 @@
   "version": {
     "Major": "2",
     "Minor": "0",
-    "Patch": "2"
+    "Patch": "3"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update Product $(message)",
@@ -70,13 +70,22 @@
       "label": "Subscription Required",
       "helpMarkDown": "Should consumers subscribe to this product"
       
-    },    
+    }, 
+    {
+      "name": "subscriptionsLimit",
+      "type": "pickList",
+      "label": "Subscription Limit",
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "visibleRule": "subscriptionRequired = true"
+    },   
     {
       "name": "approvalRequired",
       "type": "boolean",      
       "label": "Approval Required",
-      "helpMarkDown": "Should subscriber requests be approved"
-      
+      "helpMarkDown": "Should subscriber requests be approved",
+      "visibleRule": "subscriptionRequired = true"
     },
     {
       "name": "state",
@@ -84,15 +93,7 @@
       "required": false,
       "label": "Published",
       "helpMarkDown": "Is the product published or not"      
-    },
-    {
-      "name": "subscriptionsLimit",
-      "type": "pickList",
-      "label": "Subscription Limit",
-      "properties": {
-        "EditableOptions": "True"
-      }
-    },
+    },    
 
     {
       "name": "TemplateSelector",

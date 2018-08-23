@@ -7,6 +7,10 @@ The purpose of this extension is to bring Azure API Management into VSTS as part
 is good to associate the release of your backends APIs with their corresponding facade APIs published against the API Gateway. On top of the API Management integration, the extension also 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
+## v2.0.1/5
+* Minor improvements in the policy templates
+* Product creation task revisited to with visibility rules
+* Support of OAuth2 servers and OpenID Connect integration. Note that if you double check the authorization settings in the portal, you might need to refresh the page multiple times before it gets rendered correctly.
 ## v2.0 - new features
 The below features were added.
 
@@ -16,14 +20,14 @@ The below features were added.
 ## v2.0 - bug fixes
 * Switched the input type from "string" to "multiline" for policies
 * Added a new policy of type "custom"
+## V1.0.1/2
+Update of the documentation.
 ## v1.0
 * Supports versioned APIs
 * Creation of API products on the fly
 * Supports both API and Product policies
 * Supports the creation of APIs on top of Azure Functions
 * API Security checker
-## V1.0.1/2
-Update of the documentation.
 
 # Setup prerequisite and considerations
 In order to use this extension, you must have an ARM Service Endpoint configured in VSTS and make sure this endpoint is allowed to contribute to API Management instances. This can easily 

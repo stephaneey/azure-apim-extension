@@ -12,8 +12,8 @@
   "demands": [],
   "version": {
     "Major": "2",
-    "Minor": "2",
-    "Patch": "1"
+    "Minor": "3",
+    "Patch": "0"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API $(message)",
@@ -60,6 +60,41 @@
         "EditableOptions": "False"
       },
       "visibleRule": "UseProductCreatedByPreviousTask=false"
+    },
+    {
+      "name": "Authorization",
+      "type": "pickList",
+      "label": "Authorization",
+      "required": true,
+      "helpMarkDown": "Enable Authorization for the developer portal",
+      "defaultValue": "None",
+      "options": {
+        "None": "None",
+        "OAuth":"OAuth",
+        "OpenID":"OpenID Connect"
+      }
+    },
+    {
+      "name": "oauth",
+      "type": "pickList",
+      "label": "Authorization server",
+      "required": false,
+      "helpMarkDown": "Authorization server to associate to the API",
+      "properties": {
+        "EditableOptions": "false"
+      },
+      "visibleRule": "Authorization=OAuth"
+    },
+    {
+      "name": "oid",
+      "type": "pickList",
+      "label": "OpenID Connect",
+      "required": false,
+      "helpMarkDown": "OpenID provider to associate to the API",
+      "properties": {
+        "EditableOptions": "false"
+      },
+      "visibleRule": "Authorization=OpenID"
     },
     {
       "name": "SwaggerPicker",
@@ -156,7 +191,7 @@
       "name": "CacheLookup",
       "type": "multiline",
       "label": "Policy",
-      "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t\t<cache-store duration='3600' />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
       "helpMarkDown": "Default Cache Lookup Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
       "visibleRule": "TemplateSelector = CacheLookup"
@@ -247,7 +282,21 @@
       "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/products?api-version=2017-03-01",
       "resultSelector": "jsonpath:$.value[*]",
       "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
-    }    
+    },
+    {
+      "target": "oauth",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/authorizationServers?api-version=2018-01-01",
+      "resultSelector": "jsonpath:$.value[*]",
+      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+    },
+    {
+      "target": "oid",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/openidConnectProviders?api-version=2018-01-01",
+      "resultSelector": "jsonpath:$.value[*]",
+      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+    }     
   ],
   "execution": {
     "PowerShell3": {
