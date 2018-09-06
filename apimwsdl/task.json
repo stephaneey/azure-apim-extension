@@ -86,7 +86,7 @@
       "type": "string",
       "label": "Service Name",
       "required": true,
-      "helpMarkDown": "Name of endpoint(port) to import from WSDL.",
+      "helpMarkDown": "Name of the service as described in the WSDL",
       "defaultValue": ""
     },
     {
@@ -94,7 +94,7 @@
       "type": "string",
       "label": "Service Endpoint",
       "required": true,
-      "helpMarkDown": "Make sure the URL is connectable from the build servers.",
+      "helpMarkDown": "Name of endpoint(port) to import from WSDL.",
       "defaultValue": ""
     },
     {

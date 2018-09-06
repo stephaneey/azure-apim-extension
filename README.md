@@ -7,6 +7,8 @@ The purpose of this extension is to bring Azure API Management into VSTS as part
 is good to associate the release of your backends APIs with their corresponding facade APIs published against the API Gateway. On top of the API Management integration, the extension also 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
+## v2.1.0
+* New task to import legacy services from WSDL: SOAP Pass-Through and SOAP to REST. Author: Luis Ruiz Pavon
 ## v2.0.1/5
 * Minor improvements in the policy templates
 * Product creation task revisited to with visibility rules
@@ -54,6 +56,7 @@ This task allows you to create a new Gateway API or update an existing one, agai
   <br/>where you reference the Swagger location as well as the API suffix and optionally a policy that governs the API such as a JWT validation policy.
 ## API Management - Create or update versioned API
 This task allows you to create a new Versioned Gateway API or update an existing one, against backend APIs. The reason why versioning has been put in a separate task is to make it clear for the VSTS Release Managers and to be compliant with the old way of working with APIM which did not support versioning in the past. 
+Note that you can create gateway APIs based on WSDL files.
 ![Versioned API](images/apiv.png "Versioned API")
   <br/>where you may also define the versioning scheme.
 ## API Management - Create or update API against Azure Functions
