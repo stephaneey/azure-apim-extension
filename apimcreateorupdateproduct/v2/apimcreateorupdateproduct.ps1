@@ -13,6 +13,8 @@ This task creates an APIM product.
 		$displayName=Get-VstsInput -Name DisplayName
 		$product=Get-VstsInput -Name product		
 		$state=Get-VstsInput -Name state
+		$groups = $(Get-VstsInput -Name groups).Split([Environment]::NewLine)
+
 		if($state -eq $true)
 		{
 			$state="published"
@@ -30,7 +32,7 @@ This task creates an APIM product.
 		{
 			$subscriptionsLimit='null'
 		}
-	$SelectedTemplate=Get-VstsInput -Name TemplateSelector
+		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
 		if($SelectedTemplate -eq "RateAndQuota")
 		{
 			$PolicyContent = Get-VstsInput -Name RateAndQuota
@@ -142,6 +144,22 @@ This task creates an APIM product.
 			$er=$_.ErrorDetails.Message.ToString()|ConvertFrom-Json
 			write-host $er.error.details
 			throw
+		}
+
+		foreach ($group in $groups)
+		{
+			try
+			{
+				$groupapiurl = "$($baseurl)/products/$($product)/groups/$($group)?api-version=2018-01-01"
+				Write-Host "Adding group to product $($groupapiurl)"
+				Invoke-WebRequest -UseBasicParsing -Uri $groupapiurl -Headers $headers -Method Put -Body $JsonPolicies -ContentType "application/json"
+			}
+			catch [System.Net.WebException] 
+			{
+				$er=$_.ErrorDetails.Message.ToString()|ConvertFrom-Json
+				Write-Host $er.error.details
+				throw
+			}
 		}
 
 		if($PolicyContent -ne $null -and $PolicyContent -ne "")
