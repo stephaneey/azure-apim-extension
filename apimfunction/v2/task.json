@@ -13,7 +13,7 @@
   "version": {
     "Major": "2",
     "Minor": "0",
-    "Patch": "2"
+    "Patch": "3"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API on Function $(message)",
@@ -32,7 +32,10 @@
       "label": "API Resource Group",
       "type": "pickList",
       "required": true,
-      "helpMarkDown": "Select resource group which contains the API portal"
+      "helpMarkDown": "Select resource group which contains the API portal",
+      "properties": {
+        "EditableOptions": "True"
+      }
     },
     {
       "name": "ApiPortalName",
@@ -41,7 +44,7 @@
       "required": true,
       "helpMarkDown": "The API Portal you want to deploy against",
       "properties": {
-        "EditableOptions": "false"
+        "EditableOptions": "True"
       }
     },
     {
@@ -57,7 +60,7 @@
       "required": false,
       "helpMarkDown": "Product you want to add the API to.",
       "properties": {
-        "EditableOptions": "False"
+        "EditableOptions": "True"
       },
       "visibleRule": "UseProductCreatedByPreviousTask=false"
     },
