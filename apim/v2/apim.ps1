@@ -22,6 +22,17 @@ shared VNET
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
 		$path = Get-VstsInput -Name pathapi
+		$Authorization = Get-VstsInput -Name Authorization
+		$oid = Get-VstsInput -Name oid
+		$oauth = Get-VstsInput -Name oauth
+		$AuthorizationBits='"authenticationSettings":null'
+		switch($Authorization)
+		{
+			'OAuth' {$AuthorizationBits='"authenticationSettings":{"oAuth2":{"authorizationServerId":"'+$oauth+'","scope":null}}'}
+			'OpenID' {$AuthorizationBits='"authenticationSettings":{"openid":{"openidProviderId":"'+$oid+'"}}'}
+			
+		}
+
 		if($SelectedTemplate -eq "CacheLookup")
 		{
 			$PolicyContent = Get-VstsInput -Name CacheLookup
@@ -139,6 +150,16 @@ shared VNET
 		Write-Host "Creating or updating API $($targeturl)"
 		try
 		{
+			Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers -Body $json -Method Put -ContentType "application/json"
+			$json = '{
+				"properties": {	"id":"/apis/'+$($newapi)+'",	
+				"protocols":["https"],		
+				"name": "'+$($newapi)+'",
+				"path": "'+$($path)+'",'+$AuthorizationBits+'
+			 }
+			}'
+			Write-Host "Updating with authorization information"
+			Write-Host $json
 			Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers -Body $json -Method Put -ContentType "application/json"
 		}
 		catch [System.Net.WebException] 

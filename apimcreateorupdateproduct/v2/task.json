@@ -122,6 +122,9 @@
         "RateByKey": "RateByKey",
         "QuotaByKey": "QuotaByKey",
         "HeaderCheck": "HeaderCheck"
+      },
+      "properties": {
+        "EditableOptions": "True"
       }
     },
     {

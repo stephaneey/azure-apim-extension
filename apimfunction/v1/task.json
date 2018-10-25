@@ -32,7 +32,10 @@
       "label": "API Resource Group",
       "type": "pickList",
       "required": true,
-      "helpMarkDown": "Select resource group which contains the API portal"
+      "helpMarkDown": "Select resource group which contains the API portal",
+      "properties": {
+        "EditableOptions": "True"
+      }
     },
     {
       "name": "ApiPortalName",

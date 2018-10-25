@@ -13,7 +13,7 @@
   "version": {
     "Major": "1",
     "Minor": "0",
-    "Patch": "1"
+    "Patch": "2"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API from WSDL $(message)",
@@ -74,6 +74,9 @@
       "options": {
         "soap":"SOAP pass-through API",
         "http": "SOAP to REST API"
+      },
+      "properties": {
+        "EditableOptions": "True"
       }
     },
     {
@@ -139,6 +142,9 @@
         "RateByKey": "RateByKey",
         "QuotaByKey": "QuotaByKey",
         "HeaderCheck": "HeaderCheck"
+      },
+      "properties": {
+        "EditableOptions": "True"
       }
     },
     {

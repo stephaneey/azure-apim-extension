@@ -13,7 +13,7 @@
   "version": {
     "Major": "2",
     "Minor": "3",
-    "Patch": "1"
+    "Patch": "2"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API $(message)",
@@ -75,6 +75,9 @@
         "None": "None",
         "OAuth":"OAuth",
         "OpenID":"OpenID Connect"
+      },
+      "properties": {
+        "EditableOptions": "True"
       }
     },
     {
@@ -110,6 +113,9 @@
         "Url": "Url",
         "Code":"Code",
         "Artifact":"Build Artifact"
+      },
+      "properties": {
+        "EditableOptions": "True"
       }
     },
     {
@@ -166,6 +172,9 @@
         "Header":"Header",
         "Query":"Query String"
       },
+      "properties": {
+        "EditableOptions": "True"
+      },
       "visibleRule": "version=v1"
     },    
     {
@@ -211,6 +220,9 @@
         "RateByKey": "RateByKey",
         "QuotaByKey": "QuotaByKey",
         "HeaderCheck": "HeaderCheck"
+      },
+      "properties": {
+        "EditableOptions": "True"
       }
     },
     {

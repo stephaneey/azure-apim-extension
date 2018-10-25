@@ -7,6 +7,8 @@ The purpose of this extension is to bring Azure API Management into VSTS as part
 is good to associate the release of your backends APIs with their corresponding facade APIs published against the API Gateway. On top of the API Management integration, the extension also 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
+## v2.2.0
+* Added the possibility to associate groups to products. Author: Luis Ruiz Pavon
 ## v2.1.0
 * New task to import legacy services from WSDL: SOAP Pass-Through and SOAP to REST. Author: Luis Ruiz Pavon
 ## v2.0.1/5

@@ -13,7 +13,7 @@
   "version": {
     "Major": "2",
     "Minor": "0",
-    "Patch": "3"
+    "Patch": "5"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API on Function $(message)",
@@ -97,6 +97,9 @@
         "RateByKey": "RateByKey",
         "QuotaByKey": "QuotaByKey",
         "HeaderCheck": "HeaderCheck"
+      },
+      "properties": {
+        "EditableOptions": "True"
       }
     },
     {
@@ -192,6 +195,9 @@
       "label": "Functions Resource Group",
       "type": "pickList",
       "required": true,
+      "properties": {
+        "EditableOptions": "True"
+      },
       "helpMarkDown": "Select resource group which contains the Azure Functions"
     },
     {
@@ -201,7 +207,7 @@
       "required": true,
       "helpMarkDown": "Web site where your functions are deployed",
       "properties": {
-        "EditableOptions": "true"
+        "EditableOptions": "True"
       }
     }
 
