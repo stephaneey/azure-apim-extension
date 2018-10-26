@@ -160,7 +160,7 @@ shared VNET
 			}'
 			Write-Host "Updating with authorization information"
 			Write-Host $json
-			Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers -Body $json -Method Put -ContentType "application/json"
+			Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers -Body $json -Method Patch -ContentType "application/json"
 		}
 		catch [System.Net.WebException] 
 		{
