@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "apim",
   "name": "API Management Suite",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "publisher": "stephane-eyskens",
   "tags": [
     "API",
@@ -29,7 +29,7 @@
   ],
   "description": "Broad support of Azure API Management",
   "categories": [
-    "Build and release"
+    "Azure Pipelines"
   ],
   "icons": {
     "default": "images/extension-icon.png"
