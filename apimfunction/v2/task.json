@@ -1,8 +1,8 @@
 {
   "id": "cad4b382-7e58-4e06-917a-d301ab1d52d9",
   "name": "apimfunction",
-  "friendlyName": "API Management - Create or Update API on Azure Functions",
-  "description": "API Management - Create or Update API on Azure Functions",
+  "friendlyName": "API Management - Create or Update API on Azure Functions (v1)",
+  "description": "API Management - Create or Update API on Azure Functions (v1)",
   "author": "Stephane Eyskens",
   "helpMarkDown": "Create or Update API on Azure Functions",
   "category": "Utility",
@@ -13,10 +13,10 @@
   "version": {
     "Major": "2",
     "Minor": "0",
-    "Patch": "5"
+    "Patch": "6"
   },
   "minimumAgentVersion": "1.95.0",
-  "instanceNameFormat": "API Management - Create/Update API on Function $(message)",
+  "instanceNameFormat": "API Management - Create/Update API on Function(v1) $(message)",
   "inputs": [
     {
       "name": "ConnectedServiceNameARM",
