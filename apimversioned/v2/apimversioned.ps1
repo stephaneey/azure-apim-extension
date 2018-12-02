@@ -182,7 +182,7 @@ shared VNET
 					"displayName":"'+$($newapi)+'",'+$AuthorizationBits+',
 					 "path":"'+$($path)+'",
 					 "protocols":["https"],
-					 "apiVersion":"v1",
+					 "apiVersion":"'+$($v)+'",
 					 "apiVersionSet":{
 					   "id":"/api-version-sets/'+$($version)+'",
 					   "name":"'+$($newapi)+'",'+$($scheme)+'
