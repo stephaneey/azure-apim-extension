@@ -145,30 +145,12 @@ This task creates an APIM product.
 			write-host $er.error.details
 			throw
 		}
-		#checking whether the provided groups exist or not
-		$odataFilter="("
-		foreach($group in $groups)
-		{
-			$odataFilter+="name%20eq%20'"+$group+"'%20or%20"
-		}
-		$odataFilter=$odataFilter.Substring(0,$odataFilter.Length-8)
-		$odataFilter+=")"
-		$existingGroupsUri="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)/groups?api-version=2017-03-01&"+'$filter='+"$($odataFilter)"
-		$existingProductGroupsUri="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)/products/$($product)/groups?api-version=2018-01-01"
-		$existingProductGroups=Invoke-WebRequest -UseBasicParsing -Uri $existingProductGroupsUri -Headers $headers|ConvertFrom-Json
-		Write-Host "getting existing groups $($existingGroupsUri)"
-		$existingGroups=Invoke-WebRequest -UseBasicParsing -Uri $existingGroupsUri -Headers $headers|ConvertFrom-Json
 		
-		foreach ($group in $groups)
+		
+	foreach ($group in $groups)
 		{
 			try
 			{
-				if($null -eq ($g=$existingGroups.value|where {$_.name -eq $group}))
-				{
-					write-host "creating group $($group)"
-					$groupBody="{'properties':{'displayName':'$($group)'}}"
-					Invoke-WebRequest -UseBasicParsing -Uri "$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)/groups/$($group)?api-version=2017-03-01" -Method Put -ContentType application/json -Body $groupBody -Headers $headers
-				}
 				$groupapiurl = "$($baseurl)/products/$($product)/groups/$($group)?api-version=2018-01-01"
 				Write-Host "Adding group to product $($groupapiurl)"
 				Invoke-WebRequest -UseBasicParsing -Uri $groupapiurl -Headers $headers -Method Put -Body $JsonPolicies -ContentType "application/json"
