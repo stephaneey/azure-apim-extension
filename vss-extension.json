@@ -57,6 +57,9 @@
       "path": "apisecuritychecker"
     },
     {
+      "path": "apimsavetorepository"
+    },
+    {
       "path": "images",
       "addressable": true
     }
@@ -131,6 +134,16 @@
       ],
       "properties": {
         "name": "apimfunctionversioned"
+      }
+    },
+    {
+      "id": "apimsavetorepository",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "apimsavetorepository"
       }
     }
   ]
