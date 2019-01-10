@@ -60,6 +60,9 @@
       "path": "apimsavetorepository"
     },
     {
+      "path": "apimrestorefromrepository"
+    },
+    {
       "path": "images",
       "addressable": true
     }
@@ -144,6 +147,16 @@
       ],
       "properties": {
         "name": "apimsavetorepository"
+      }
+    },
+    {
+      "id": "apimrestorefromrepository",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "apimrestorefromrepository"
       }
     }
   ]

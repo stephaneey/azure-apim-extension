@@ -4,7 +4,7 @@ Trace-VstsEnteringInvocation $MyInvocation
 try {
 <#  
 Warning: this code is provided as-is with no warranty of any kind.
-This task saves the state of your API MAnagement portal to the repository. 
+This task restore the state of your API MAnagement portal from the repository. 
 Prerequisite to using this task: the API Gateway requires connectivity to the backend, so make sure these are either public, either part of a
 shared VNET
 #>	
@@ -46,8 +46,8 @@ shared VNET
 		
 		write-host $json
 		$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"
-		$targeturl="$($baseurl)/tenant/configuration/save?api-version=2017-03-01"	
-		Write-Host "Saving to repository $($targeturl)"
+		$targeturl="$($baseurl)/tenant/configuration/deploy?api-version=2017-03-01"	
+		Write-Host "Restoring from repository $($targeturl)"
 		try
 		{
 			Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers -Body $json -Method Post -ContentType "application/json"

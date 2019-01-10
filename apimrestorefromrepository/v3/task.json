@@ -1,0 +1,73 @@
+{
+  "id": "c53cf115-5ad9-4c25-a4bc-023e00a3ee8f",
+  "name": "apimrestorefromrepository",
+  "friendlyName": "API Management - Restore API definition from repository",
+  "description": "API Management - Restore API definition from repository",
+  "author": "Justin Marshall",
+  "helpMarkDown": "API Management - Restore API definition from repository",
+  "category": "Utility",
+  "visibility": [
+    "Release"
+  ],
+  "demands": [],
+  "version": {
+    "Major": "3",
+    "Minor": "0",
+    "Patch": "0"
+  },
+  "minimumAgentVersion": "1.95.0",
+  "instanceNameFormat": "API Management - Restore API definition from repository $(message)",
+  "inputs": [
+    {
+      "name": "ConnectedServiceNameARM",
+      "type": "connectedService:AzureRM",
+      "label": "Azure Subscription",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Azure Resource Manager subscription to configure before running PowerShell"
+
+    },
+    {
+      "name": "ResourceGroupName",
+      "label": "Resource Group",
+      "type": "pickList",
+      "required": true,
+      "helpMarkDown": "Select resource group which contains the API portal",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "ApiPortalName",
+      "type": "pickList",
+      "label": "API Portal",
+      "required": true,
+      "helpMarkDown": "The API Portal you want to deploy against",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    }
+  ],
+  "dataSourceBindings": [
+    {
+      "target": "ResourceGroupName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "dataSourceName": "AzureResourceGroups"
+    },
+    {
+      "name": "ApiPortals",
+      "target": "ApiPortalName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/$(endpoint.subscriptionId)/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service?api-version=2016-07-07",
+      "resultSelector": "jsonpath:$.value[*].name",
+      "parameters": {
+        "ResourceGroupName": "$(ResourceGroupName)"
+      }
+    }     
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "apimrestorefromrepository.ps1"
+    }
+  }
+}
