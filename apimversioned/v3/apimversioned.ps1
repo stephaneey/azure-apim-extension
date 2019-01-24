@@ -15,6 +15,7 @@ shared VNET
         $VersionHeader= Get-VstsInput -Name VersionHeader
 		$QueryParam = get-VstsInput -Name QueryParam
 		$VersionScheme = Get-VstsInput -Name scheme 
+		$MicrosoftApiManagementAPIVersion - Get-VstsInput -Name MicrosoftApiManagementAPIVersion
         switch($VersionScheme)
 		{
 			"Path" {$scheme='"versioningScheme":"Segment"'}
@@ -116,7 +117,7 @@ shared VNET
 		
 		write-host $json
 		$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"
-		$targeturl="$($baseurl)/apis/$($newapi)?api-version=2017-03-01"	
+		$targeturl="$($baseurl)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"	
 		#checking whether the API already exists or not. If not, a versionset must be created.
 		#NotFound
 		try
@@ -168,11 +169,11 @@ shared VNET
 				Write-Host "Creating new API from scratch"
 				#creating the api version set, the api and importing the swagger definition into it
 				$version="$($newapi)versionset"
-				$versionseturl="$($baseurl)/api-version-sets/$($version)?api-version=2017-03-01"
+				$versionseturl="$($baseurl)/api-version-sets/$($version)?api-version=$($MicrosoftApiManagementAPIVersion)"
 				$json='{"id":"/api-version-sets/'+$($version)+'","name":"'+$($newapi)+'",'+$($scheme)+'}'
 				Write-Host "Creating version set using $($versionseturl) using $($json)"
 				Invoke-WebRequest -UseBasicParsing -Uri $versionseturl  -Body $json -ContentType "application/json" -Headers $headers -Method Put
-				$apiurl="$($baseurl)/apis/$($newapi)?api-version=2017-03-01"
+				$apiurl="$($baseurl)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"
 				$json = '{
 				  "id":"/apis/'+$($newapi)+'",
 				  "name":"'+$($newapi)+'",
@@ -193,7 +194,7 @@ shared VNET
 				Write-Host "Creating API using $($apiurl) and $($json)"
 				Invoke-WebRequest -UseBasicParsing -Uri $apiurl  -Body $json -ContentType "application/json" -Headers $headers -Method Put
 				$headers.Add("If-Match","*")
-				$importurl="$($baseurl)/apis/$($newapi)?import=true&api-version=2017-03-01"
+				$importurl="$($baseurl)/apis/$($newapi)?import=true&api-version=$($MicrosoftApiManagementAPIVersion)"
 				
 				Write-Host "Importing Swagger definition to API using $($importurl)"
 				Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/vnd.swagger.doc+json" -Body $swagger -Headers $headers
@@ -201,7 +202,7 @@ shared VNET
 			else
 			{
 				#the api already exists, only a new version must be created.
-				$newversionurl="$($baseurl)/apis/$($newapi)$($v);rev=1?api-version=2017-03-01"
+				$newversionurl="$($baseurl)/apis/$($newapi)$($v);rev=1?api-version=$($MicrosoftApiManagementAPIVersion)"
 				$headers = @{
 				 Authorization = "Bearer $($resp.access_token)"        
 				}				
@@ -227,12 +228,12 @@ shared VNET
 				{
 					Write-Host "Creating a new version $($newversionurl) with $($json)"
 					Invoke-WebRequest -UseBasicParsing $newversionurl -Method Put -ContentType "application/vnd.ms-azure-apim.revisioninfo+json" -Body $json -Headers $headers
-					$importurl="$($baseurl)/apis/$($newapi)$($v)?import=true&api-version=2017-03-01"	
+					$importurl="$($baseurl)/apis/$($newapi)$($v)?import=true&api-version=$($MicrosoftApiManagementAPIVersion)"	
 					$authurl = "$($baseurl)/apis/$($newapi)$($v)?api-version=2018-01-01"				
 				}		
 				else
 				{
-					$importurl="$($baseurl)/apis/$($newapi)?import=true&api-version=2017-03-01"
+					$importurl="$($baseurl)/apis/$($newapi)?import=true&api-version=$($MicrosoftApiManagementAPIVersion)"
 					if($currentversion -ne $v)
 					{
 						$authurl = "$($baseurl)/apis/$($newapi)$($v)?api-version=2018-01-01"			
@@ -294,7 +295,7 @@ shared VNET
 		{
 			if($product -ne $null -and $product -ne "")
 			{
-				$productapiurl=	"$($baseurl)/products/$($product)/apis/$($apimv)?api-version=2017-03-01"
+				$productapiurl=	"$($baseurl)/products/$($product)/apis/$($apimv)?api-version=$($MicrosoftApiManagementAPIVersion)"
 				
 				try
 				{
@@ -314,7 +315,7 @@ shared VNET
 		{
 			try
 			{
-				$policyapiurl=	"$($baseurl)/apis/$($apimv)/policies/policy?api-version=2017-03-01"
+				$policyapiurl=	"$($baseurl)/apis/$($apimv)/policies/policy?api-version=$($MicrosoftApiManagementAPIVersion)"
 				$JsonPolicies = "{
 				  `"properties`": {					
 					`"policyContent`":`""+$PolicyContent+"`"
