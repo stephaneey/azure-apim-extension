@@ -312,7 +312,23 @@
       "required": false,
       "helpMarkDown": "Default Header Check Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
       "visibleRule": "TemplateSelector = HeaderCheck"
+    },
+    {
+      "name": "MicrosoftApiManagementAPIVersion",
+      "type": "pickList",
+      "label": "Microsoft API Version",
+      "required": true,
+      "helpMarkDown": "Which version of the Management API should be used?",
+      "defaultValue": "2017-03-01",
+      "options": {
+        "2017-03-01": "2017-03-01",
+        "2018-01-01":"2018-01-01"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      }
     }
+
   ],
   "dataSourceBindings": [
     {
