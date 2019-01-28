@@ -15,7 +15,7 @@ shared VNET
         $VersionHeader= Get-VstsInput -Name VersionHeader
 		$QueryParam = get-VstsInput -Name QueryParam
 		$VersionScheme = Get-VstsInput -Name scheme 
-		$MicrosoftApiManagementAPIVersion - Get-VstsInput -Name MicrosoftApiManagementAPIVersion
+		$MicrosoftApiManagementAPIVersion = Get-VstsInput -Name MicrosoftApiManagementAPIVersion
         switch($VersionScheme)
 		{
 			"Path" {$scheme='"versioningScheme":"Segment"'}
