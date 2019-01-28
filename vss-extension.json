@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "apim",
   "name": "API Management Suite",
-  "version": "3.2.0",  
+  "version": "3.3.0",  
   "publisher": "stephane-eyskens",
   "tags": [
     "API",
@@ -13,7 +13,7 @@
       "path": "overview.md"
     }
   },
-  "public": true,
+  "public": false,
   "links": {
     "getstarted": {
       "uri": "https://github.com/stephaneey/azure-apim-extension"
@@ -61,6 +61,9 @@
     },
     {
       "path": "apimrestorefromrepository"
+    },
+    {
+      "path": "apimoperationpolicies"
     },
     {
       "path": "images",
@@ -157,6 +160,16 @@
       ],
       "properties": {
         "name": "apimrestorefromrepository"
+      }
+    },
+    {
+      "id": "apimoperationpolicies",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "apimoperationpolicies"
       }
     }
   ]
