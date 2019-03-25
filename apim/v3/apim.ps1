@@ -22,6 +22,7 @@ shared VNET
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
 		$SelectedTemplate=Get-VstsInput -Name TemplateSelector
 		$path = Get-VstsInput -Name pathapi
+		$MicrosoftApiManagementAPIVersion = Get-VstsInput -Name MicrosoftApiManagementAPIVersion
 		$Authorization = Get-VstsInput -Name Authorization
 		$oid = Get-VstsInput -Name oid
 		$oauth = Get-VstsInput -Name oauth
@@ -146,7 +147,7 @@ shared VNET
 		
 		write-host $json
 		$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"
-		$targeturl="$($baseurl)/apis/$($newapi)?api-version=2017-03-01"	
+		$targeturl="$($baseurl)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"	
 		Write-Host "Creating or updating API $($targeturl)"
 		try
 		{
@@ -190,7 +191,7 @@ shared VNET
 		{
 			if($product -ne $null -and $product -ne "")
 			{
-				$productapiurl=	"$($baseurl)/products/$($product)/apis/$($newapi)?api-version=2017-03-01"
+				$productapiurl=	"$($baseurl)/products/$($product)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"
 			
 				try
 				{
@@ -211,7 +212,7 @@ shared VNET
 		{
 			try
 			{
-				$policyapiurl=	"$($baseurl)/apis/$($newapi)/policies/policy?api-version=2017-03-01"
+				$policyapiurl=	"$($baseurl)/apis/$($newapi)/policies/policy?api-version=$($MicrosoftApiManagementAPIVersion)"
 				$JsonPolicies = "{
 				  `"properties`": {					
 					`"policyContent`":`""+$PolicyContent+"`"

@@ -12,6 +12,7 @@ try {
 	$soapApiType = Get-VstsInput -Name soapApiType
 	$portal = Get-VstsInput -Name ApiPortalName
 	$rg = Get-VstsInput -Name ResourceGroupName
+	$MicrosoftApiManagementAPIVersion = Get-VstsInput -Name MicrosoftApiManagementAPIVersion
 	$wsdllocation = Get-VstsInput -Name wsdllocation
 	$wsdlServiceName = Get-VstsInput -Name wsdlServiceName
 	$wsdlEndpointName = Get-VstsInput -Name wsdlEndpointName
@@ -103,7 +104,7 @@ try {
 
 	write-host $json
 	$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"
-	$targeturl="$($baseurl)/apis/$($newapi)?api-version=2017-03-01"
+	$targeturl="$($baseurl)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"
 	Write-Host "Creating or updating API $($targeturl)"
 
 	try
@@ -138,7 +139,7 @@ try {
 	{
 		if($product -ne $null -and $product -ne "")
 		{
-			$productapiurl=	"$($baseurl)/products/$($product)/apis/$($newapi)?api-version=2017-03-01"
+			$productapiurl=	"$($baseurl)/products/$($product)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"
 
 			try
 			{
@@ -159,7 +160,7 @@ try {
 	{
 		try
 		{
-			$policyapiurl=	"$($baseurl)/apis/$($newapi)/policies/policy?api-version=2017-03-01"
+			$policyapiurl=	"$($baseurl)/apis/$($newapi)/policies/policy?api-version=$($MicrosoftApiManagementAPIVersion)"
 			$JsonPolicies = "{
 				`"properties`": {
 				`"policyContent`":`""+$PolicyContent+"`"

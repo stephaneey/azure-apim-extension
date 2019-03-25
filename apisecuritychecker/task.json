@@ -12,20 +12,52 @@
   "demands": [],
   "version": {
     "Major": "1",
-    "Minor": "0",
-    "Patch": "1"
+    "Minor": "1",
+    "Patch": "0"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Security Checker $(message)",
   "inputs": [
     {
+      "name": "SwaggerPicker",
+      "type": "pickList",
+      "label": "Swagger location",
+      "required": true,
+      "helpMarkDown": "How should the API version be transmitted by consumers",
+      "defaultValue": "Url",
+      "options": {
+        "Url": "Url",
+        "Code":"Code",
+        "Artifact":"Build Artifact"
+      }
+    },
+    {
       "name": "swaggerlocation",
       "type": "string",
       "label": "Swagger Location URL",
       "required": true,
-      "helpMarkDown": "",
-      "defaultValue": ""
-    }
+      "helpMarkDown": "Make sure the URL is connectable from the build servers",
+      "defaultValue": "",
+      "visibleRule": "SwaggerPicker=Url"
+    },
+    {
+      "name": "swaggerartifact",
+      "type": "string",
+      "label": "Swagger Artifact",
+      "required": true,
+      "helpMarkDown": "Swagger Artifact. For instance $(System.DefaultWorkingDirectory)/<yourswagger.json>",
+      "defaultValue": "",
+      "visibleRule": "SwaggerPicker=Artifact"
+    },
+    {
+      "name": "swaggercode",
+      "type": "multiline",
+      "label": "Swagger body",
+      "required": true,
+      "helpMarkDown": "Insert the full swagger definition",
+      "defaultValue": "",
+      "visibleRule": "SwaggerPicker=Code"
+    }    
   ],
   "execution": {
     "PowerShell3": {
