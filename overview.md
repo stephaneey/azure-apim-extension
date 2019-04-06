@@ -8,6 +8,7 @@ is good to associate the release of your backends APIs with their corresponding 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
 ## v3.4.0
+* Support of OpenAPI v3
 * New task to create or update global policy. 
 * ARM API version selector added to two of the tasks
 ## v3.3.0

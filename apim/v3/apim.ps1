@@ -12,11 +12,16 @@ shared VNET
 	    $arm=Get-VstsInput -Name ConnectedServiceNameARM
 		$Endpoint = Get-VstsEndpoint -Name $arm -Require	
 		$newapi=Get-VstsInput -Name targetapi
+		$DisplayName=Get-VstsInput -Name DisplayName
+		if([string]::IsNullOrEmpty($DisplayName))
+				{
+					$DisplayName=$newapi
+				}
 		$portal=Get-VstsInput -Name ApiPortalName
 		$rg=Get-VstsInput -Name ResourceGroupName 
 		$SwaggerPicker = Get-VstsInput -Name SwaggerPicker 
 		$swaggerlocation=Get-VstsInput -Name swaggerlocation
-		$swaggercode=Get-VstsInput -Name swaggercode 
+		$swaggercode=Get-VstsInput -Name swaggercode		
 		$swaggerartifact=Get-VstsInput -Name swaggerartifact
 		$products = $(Get-VstsInput -Name product1).Split([Environment]::NewLine)
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
@@ -27,6 +32,9 @@ shared VNET
 		$oid = Get-VstsInput -Name oid
 		$oauth = Get-VstsInput -Name oauth
 		$AuthorizationBits='"authenticationSettings":null'
+		$OpenAPISpec=Get-VstsInput -Name OpenAPISpec
+		$Format=Get-VstsInput -Name Format
+		Add-Type -AssemblyName System.Web
 		switch($Authorization)
 		{
 			'OAuth' {$AuthorizationBits='"authenticationSettings":{"oAuth2":{"authorizationServerId":"'+$oauth+'","scope":null}}'}
@@ -106,40 +114,116 @@ shared VNET
 		switch($SwaggerPicker)
 			{
 				"Url" {
-					$json = '{
-						"properties": {
-						"contentFormat": "swagger-link-json",
-						"contentValue": "'+$($SwaggerLocation)+'",
-						"displayName": "'+$($newapi)+'",
-						"path": "'+$($path)+'"
+					if($OpenAPISpec -eq "v2")
+					{
+						$json = '{
+"name": "'+$($newapi)+'",
+"id": "/apis/'+$($newapi)+'",
+							"properties": {
+							"contentFormat": "swagger-link-json",
+							"contentValue": "'+$($SwaggerLocation)+'",
+							"displayName": "'+$($DisplayName)+'",
+							"path": "'+$($path)+'",
+							"protocols":["https"]
+						}
+						}'
 					}
-					}'
+					else {
+						$json = '{
+"name": "'+$($newapi)+'",
+"id": "/apis/'+$($newapi)+'",
+							"properties": {
+"displayName": "'+$($DisplayName)+'",
+							"contentFormat": "openapi-link",
+							"contentValue": "'+$($SwaggerLocation)+'",							
+							"path": "'+$($path)+'",
+							"protocols":["https"]
+						}
+						}'
+					}					
 				}
 				"Artifact" {
 					try {
- 						Assert-VstsPath -LiteralPath $swaggerartifact -PathType Leaf
- 						$swaggercode = Get-Content "$($swaggerartifact)"
-						$json = '{
-							"properties": {
-							"contentFormat": "swagger-json",
-							"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
-							"displayName": "'+$($newapi)+'",
-							"path": "'+$($path)+'"
+						 Assert-VstsPath -LiteralPath $swaggerartifact -PathType Leaf
+						 
+						 $swaggercode = Get-Content "$($swaggerartifact)" -Raw
+						 
+						 if($OpenAPISpec -eq "v2")
+						 {							 
+							$json = '{
+"name": "'+$($newapi)+'",
+"id": "/apis/'+$($newapi)+'",
+								"properties": {
+								"contentFormat": "swagger-json",
+								"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
+								"displayName": "'+$($DisplayName)+'",
+								"path": "'+$($path)+'",
+								"protocols":["https"]
+							}
+							}'
+						 } else{
+							$swaggercode=$swaggercode.Replace("`r`n","`n")
+							$swaggercode =[System.Web.HttpUtility]::JavaScriptStringEncode($swaggercode)
+							 if($Format -eq 'json')
+							 {
+								 $contentFormat="openapi+json"
+							 }else{
+								$contentFormat="openapi"
+							 }								 
+							 $json = '{
+"name": "'+$($newapi)+'",
+"id": "/apis/'+$($newapi)+'",
+								"properties": {
+								"contentFormat": "'+$($contentFormat)+'",
+								"contentValue": "'+$($swaggercode)+'",
+								"displayName": "'+$($DisplayName)+'",
+								"path": "'+$($path)+'",
+								"protocols":["https"]
+							}
+							}'
 						 }
-						}'
+						 
+ 						
 					} catch {
   						Write-Error "Invalid file location $($swaggerartifact)"
 					}
 				}
-				"Code" {					
-					$json = '{
-						"properties": {
-						"contentFormat": "swagger-json",
-						"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
-						"displayName": "'+$($newapi)+'",
-						"path": "'+$($path)+'"
-					 }
-					}'
+				"Code" {		
+					if($OpenAPISpec -eq "v2")
+					{
+						$json = '{
+"name": "'+$($newapi)+'",
+"id": "/apis/'+$($newapi)+'",
+							"properties": {
+							"contentFormat": "swagger-json",
+							"contentValue": "'+$($swaggercode).Replace('"','\"')+'",
+							"displayName": "'+$($DisplayName)+'",
+							"path": "'+$($path)+'"
+						 }
+						}'
+					}	
+					else {						
+						$swaggercode=$swaggercode.Replace("`r`n","`n")
+						$swaggercode =[System.Web.HttpUtility]::JavaScriptStringEncode($swaggercode)
+						if($Format -eq 'json')
+							 {
+								$contentFormat="openapi+json"
+							 }else{
+								$contentFormat="openapi"
+							 }								 
+							 $json = '{
+"name": "'+$($newapi)+'",
+"id": "/apis/'+$($newapi)+'",
+								"properties": {
+"displayName": "'+$($DisplayName)+'",
+								"contentFormat": "'+$($contentFormat)+'",
+								"contentValue": "'+$($swaggercode)+'",								
+								"path": "'+$($path)+'",
+								"protocols":["https"]
+							}
+							}'
+					}		
+					
 				}
 				default {Write-Error "Invalid swagger definition"}
 			}		
@@ -153,9 +237,11 @@ shared VNET
 		{
 			Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers -Body $json -Method Put -ContentType "application/json"
 			$json = '{
-				"properties": {	"id":"/apis/'+$($newapi)+'",	
-				"protocols":["https"],		
-				"name": "'+$($newapi)+'",
+"id": "/apis/'+$($newapi)+'",
+"name": "'+$($newapi)+'",
+				"properties": {		
+"displayName": "'+$($DisplayName)+'",
+				"protocols":["https"],						
 				"path": "'+$($path)+'",'+$AuthorizationBits+'
 			 }
 			}'

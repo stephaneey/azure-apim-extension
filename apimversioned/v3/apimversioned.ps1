@@ -23,16 +23,21 @@ shared VNET
 			"Header" {$scheme='"versioningScheme":"Header","versionHeaderName":"'+$($VersionHeader)+'"'}
 		}
 		$newapi=Get-VstsInput -Name targetapi
+		$DisplayName=Get-VstsInput -Name DisplayName
 		if($newapi.startswith("/subscriptions"))
 		{
 			$newapi=$newapi.substring($newapi.indexOf("/apis")+6)
 		}
+		if([string]::IsNullOrEmpty($DisplayName))
+				{
+					$DisplayName=$newapi
+				}
 		$v=Get-VstsInput -Name version
 		$portal=Get-VstsInput -Name ApiPortalName
 		$rg=Get-VstsInput -Name ResourceGroupName 
 		$SwaggerPicker = Get-VstsInput -Name SwaggerPicker 
 		$swaggerlocation=Get-VstsInput -Name swaggerlocation
-		$swaggercode=Get-VstsInput -Name swaggercode 
+		$swaggercode=Get-VstsInput -Name swaggercode 		
 		$swaggerartifact = Get-VstsInput -Name swaggerartifact
 		$products = $(Get-VstsInput -Name product1).Split([Environment]::NewLine)
 		$UseProductCreatedByPreviousTask=Get-VstsInput -Name UseProductCreatedByPreviousTask
@@ -40,7 +45,10 @@ shared VNET
 		$Authorization = Get-VstsInput -Name Authorization
 		$oid = Get-VstsInput -Name oid
 		$oauth = Get-VstsInput -Name oauth
+		$OpenAPISpec=Get-VstsInput -Name OpenAPISpec
+		$Format=Get-VstsInput -Name Format
 		$AuthorizationBits='"authenticationSettings":null'
+		Write-Host "Preparing API publishing in $($OpenAPISpec) format $($Format) using Azure API $($MicrosoftApiManagementAPIVersion)"
 		switch($Authorization)
 		{
 			'OAuth' {$AuthorizationBits='"authenticationSettings":{"oAuth2":{"authorizationServerId":"'+$oauth+'","scope":null}}'}
@@ -148,11 +156,12 @@ shared VNET
 					$cli=[System.Net.WebClient]::new()
 					$swagger=$cli.DownloadString($swaggerlocation)				
 					$cli.Dispose()
+					
 				}
 				"Artifact" {
 					try {
  						Assert-VstsPath -LiteralPath $swaggerartifact -PathType Leaf
- 						$swagger = Get-Content "$($swaggerartifact)"
+						 $swagger = Get-Content "$($swaggerartifact)" -Raw
 					} catch {
   						Write-Error "Invalid file location $($swaggerartifact)"
 					}
@@ -161,11 +170,16 @@ shared VNET
 					$swagger=$swaggercode
 				}
 				default {Write-Error "Invalid swagger definition"}
-			}		
-			
+			}	
+			if($OpenAPISpec -eq "v3")
+			{
+				Add-Type -AssemblyName System.Web
+				$swagger=$swagger.Replace("`r`n","`n")
+				$swagger =[System.Web.HttpUtility]::JavaScriptStringEncode($swagger)
+			}			
 
 			if($apiexists -eq $false)
-			{
+			{				
 				Write-Host "Creating new API from scratch"
 				#creating the api version set, the api and importing the swagger definition into it
 				$version="$($newapi)versionset"
@@ -179,14 +193,13 @@ shared VNET
 				  "name":"'+$($newapi)+'",
 				  "properties":
 				  { 
-					"displayName":"'+$($newapi)+'",'+$AuthorizationBits+',
+					"displayName":"'+$($DisplayName)+'",'+$AuthorizationBits+',
 					 "path":"'+$($path)+'",
 					 "protocols":["https"],
 					 "apiVersion":"'+$($v)+'",
 					 "apiVersionSet":{
 					   "id":"/api-version-sets/'+$($version)+'",
-					   "name":"'+$($newapi)+'",'+$($scheme)+'
-					   
+					   "name":"'+$($newapi)+'",'+$($scheme)+'					   
 					  },
 					  "apiVersionSetId":"/api-version-sets/'+$version+'"
 				  }
@@ -197,7 +210,23 @@ shared VNET
 				$importurl="$($baseurl)/apis/$($newapi)?import=true&api-version=$($MicrosoftApiManagementAPIVersion)"
 				
 				Write-Host "Importing Swagger definition to API using $($importurl)"
-				Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/vnd.swagger.doc+json" -Body $swagger -Headers $headers
+				#to change
+				if($OpenAPISpec -eq "v2")
+				{
+					Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/vnd.swagger.doc+json" -Body $swagger -Headers $headers
+				}
+				else {
+					if($Format -eq 'json')
+					{
+						$contentFormat="openapi+json"
+					}else{
+						$contentFormat="openapi"
+					}				
+					$openAPIBody='{"contentFormat":"'+$contentFormat+'","contentValue":"'+$swagger+'"}'
+					Write-Host "OpenAPI body is $($openAPIBdoy)"
+					Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/json" -Body $openAPIBody -Headers $headers
+				}
+				
 			}
 			else
 			{
@@ -253,8 +282,25 @@ shared VNET
 				Write-Host "applied authorization"
 				#reapplying swagger
 				
-				Write-Host "Importing swagger $($importurl)"
-				Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/vnd.swagger.doc+json" -Body $swagger -Headers $headers
+				Write-Host "Importing swagger $($importurl) spec is $($OpenAPISpec) format is $($Format)"
+
+				if($OpenAPISpec -eq "v2")
+				{
+					Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/vnd.swagger.doc+json" -Body $swagger -Headers $headers	
+				}
+				else {
+					if($Format -eq 'json')
+					{
+						$contentFormat="openapi+json"
+					}else{
+						$contentFormat="openapi"
+					}				
+					$openAPIBody='{"contentFormat":"'+$contentFormat+'","contentValue":"'+$swagger+'"}'
+					Write-Host "API Body is $($openAPIBody)"
+					Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/json" -Body $openAPIBody -Headers $headers
+
+				}
+				
 			}
 			
 		}
