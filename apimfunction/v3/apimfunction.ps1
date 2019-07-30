@@ -38,6 +38,10 @@ for each and every function to inject the function's code as query string parame
 		{
 			$PolicyContent = Get-VstsInput -Name Basic
 		}
+		if($SelectedTemplate -eq "JWT")
+		{
+			$PolicyContent = Get-VstsInput -Name JWT
+		}
 		if($SelectedTemplate -eq "IP")
 		{
 			$PolicyContent = Get-VstsInput -Name IP
