@@ -45,6 +45,10 @@ This task creates an APIM product.
 		{
 			$PolicyContent = Get-VstsInput -Name Basic
 		}
+		if($SelectedTemplate -eq "JWT")
+		{
+			$PolicyContent = Get-VstsInput -Name JWT
+		}
 		if($SelectedTemplate -eq "IP")
 		{
 			$PolicyContent = Get-VstsInput -Name IP
