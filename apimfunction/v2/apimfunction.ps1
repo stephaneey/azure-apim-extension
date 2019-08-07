@@ -61,7 +61,7 @@ for each and every function to inject the function's code as query string parame
 		}
 		if($PolicyContent -ne $null -and $PolicyContent -ne "")
 		{
-			$PolicyContent = $PolicyContent.replace("`"","`'")
+			$PolicyContent = $PolicyContent.replace("`"","`\`"")
 		}		
 		
 		$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"

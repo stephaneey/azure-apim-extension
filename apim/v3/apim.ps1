@@ -80,7 +80,7 @@ shared VNET
 		}
 		if($PolicyContent -ne $null -and $PolicyContent -ne "")
 		{
-			$PolicyContent = $PolicyContent.replace("`"","`'")
+			$PolicyContent = $PolicyContent.replace("`"","`\`"")
 		}	
 		
 

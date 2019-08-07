@@ -62,7 +62,7 @@ Prerequisite to using this task: VSTS agents must be able to connect to both the
 		}
 		if($PolicyContent -ne $null -and $PolicyContent -ne "")
 		{
-			$PolicyContent = $PolicyContent.replace("`"","`'")
+			$PolicyContent = $PolicyContent.replace("`"","`\`"")
 		}		
 		
 		$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"

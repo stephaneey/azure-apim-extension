@@ -57,7 +57,7 @@ try {
 	}
 	if($PolicyContent -ne $null -and $PolicyContent -ne "")
 	{
-		$PolicyContent = $PolicyContent.replace("`"","`'")
+		$PolicyContent = $PolicyContent.replace("`"","`\`"")
 	}
 
 	$client=$Endpoint.Auth.Parameters.ServicePrincipalId
