@@ -189,7 +189,7 @@ shared VNET
 				#creating the api version set, the api and importing the swagger definition into it
 				$version="$($newapi)versionset"
 				$versionseturl="$($baseurl)/api-version-sets/$($version)?api-version=$($MicrosoftApiManagementAPIVersion)"
-				$json='{"id":"/api-version-sets/'+$($version)+'","name":"'+$($newapi)+'",'+$($scheme)+'}'
+				$json='{"id":"/api-version-sets/'+$($version)+'","name":"'+$($newapi)+'","displayName":"'+$($DisplayName)+'",'+$($scheme)+'}'
 				Write-Host "Creating version set using $($versionseturl) using $($json)"
 				Invoke-WebRequest -UseBasicParsing -Uri $versionseturl  -Body $json -ContentType "application/json" -Headers $headers -Method Put
 				$apiurl="$($baseurl)/apis/$($newapi)?api-version=$($MicrosoftApiManagementAPIVersion)"
