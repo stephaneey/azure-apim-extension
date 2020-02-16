@@ -117,7 +117,7 @@ This task creates an APIM product.
 		try
 		{
 			Invoke-WebRequest -UseBasicParsing -Uri $producturl -Headers $headers -Method Put -Body $json -ContentType "application/json"
-			Write-Host ("##vso[task.setvariable variable=NewUpdatedProduct;]$displayName")
+			Write-Host ("##vso[task.setvariable variable=NewUpdatedProduct;]$product")
 		}
 		catch [System.Net.WebException] 
 		{
