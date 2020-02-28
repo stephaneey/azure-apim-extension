@@ -1,6 +1,6 @@
 {
   "manifestVersion": 1,
-  "id": "apimdev",
+  "id": "apim",
   "name": "API Management Suite",
   "version": "3.4.4",  
   "publisher": "stephane-eyskens",
