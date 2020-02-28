@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "id": "apim",
+  "id": "apimdev",
   "name": "API Management Suite",
-  "version": "3.4.3",  
+  "version": "3.7.4",  
   "publisher": "stephane-eyskens",
   "tags": [
     "API",
@@ -13,7 +13,7 @@
       "path": "overview.md"
     }
   },
-  "public": true,
+  "public": false,
   "links": {
     "getstarted": {
       "uri": "https://github.com/stephaneey/azure-apim-extension"

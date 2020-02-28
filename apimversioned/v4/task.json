@@ -1,0 +1,436 @@
+{
+  "id": "caee5262-b7ce-48c9-b5f7-70c586148ff8",
+  "name": "apimversioned",
+  "friendlyName": "API Management - Create or Update Versioned API",
+  "description": "API Management - Create or Update Versioned API",
+  "author": "Stephane Eyskens",
+  "helpMarkDown": "API Management - Create/Update API",
+  "category": "Utility",
+  "visibility": [
+    "Release"
+  ],
+  "demands": [],
+  "version": {
+    "Major": "4",
+    "Minor": "0",
+    "Patch": "0"
+  },
+  "preview": "true",
+  "minimumAgentVersion": "1.95.0",
+  "instanceNameFormat": "API Management - Create/Update API $(message)",
+  "inputs": [
+    {
+      "name": "ConnectedServiceNameARM",
+      "type": "connectedService:AzureRM",
+      "label": "Azure Subscription",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Azure Resource Manager subscription to configure before running PowerShell"
+    },
+    {
+      "name":"CloudEnvironment",
+      "type":"string",
+      "label":"Azure Cloud",
+      "defaultValue":"https://login.windows.net/",
+      "required":true,
+      "helpMarkDown": "Keep the default if you're not using a Sovereign Cloud",
+      "options": {
+        "China": "https://login.chinacloudapi.cn",
+        "US Gov.":"https://login.microsoftonline.us",
+        "Germany":"https://login.microsoftonline.de"        
+      }
+    },
+    {
+      "name": "ResourceGroupName",
+      "label": "Resource Group",
+      "type": "pickList",
+      "required": true,
+      "helpMarkDown": "Select resource group which contains the API portal",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "ApiPortalName",
+      "type": "pickList",
+      "label": "API Portal",
+      "required": true,
+      "helpMarkDown": "The API Portal you want to deploy against",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "OpenAPISpec",
+      "type": "pickList",
+      "label": "OpenAPI Version",
+      "required": true,
+      "helpMarkDown": "Target Open API version.",
+      "defaultValue": "v2",
+      "options": {
+        "v2": "v2",
+        "v3":"v3"        
+      }
+    },
+    {
+      "name": "Format",
+      "type": "pickList",
+      "label": "API definition format",
+      "required": true,
+      "helpMarkDown": "API definition format",
+      "defaultValue": "json",
+      "options": {
+        "json": "json",
+        "yaml":"yaml"        
+      },
+      "visibleRule": "OpenAPISpec=v3"
+    },
+    {
+      "name": "UseProductCreatedByPreviousTask",
+      "type": "boolean",
+      "label": "Product created by previous task",
+      "helpMarkDown": "Make sure the task that creates/updates the product is not disabled and that it is executed by the same agent."
+    },
+    {
+      "name": "product1",
+      "type": "multiline",
+      "label": "Product(s)",
+      "required": true,
+      "helpMarkDown": "Product(s) you want to add the API to. One product per line.",
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "visibleRule": "UseProductCreatedByPreviousTask=false"
+    },
+    {
+      "name": "Authorization",
+      "type": "pickList",
+      "label": "Authorization",
+      "required": true,
+      "helpMarkDown": "Enable Authorization for the developer portal",
+      "defaultValue": "None",
+      "options": {
+        "None": "None",
+        "OAuth":"OAuth",
+        "OpenID":"OpenID Connect"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "oauth",
+      "type": "pickList",
+      "label": "Authorization server",
+      "required": false,
+      "helpMarkDown": "Authorization server to associate to the API",
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "visibleRule": "Authorization=OAuth"
+    },
+    {
+      "name": "oid",
+      "type": "pickList",
+      "label": "OpenID Connect",
+      "required": false,
+      "helpMarkDown": "OpenID provider to associate to the API",
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "visibleRule": "Authorization=OpenID"
+    },
+    {
+      "name": "SwaggerPicker",
+      "type": "pickList",
+      "label": "Definition location",
+      "required": true,
+      "helpMarkDown": "Where is the API definition?",
+      "defaultValue": "Url",
+      "options": {
+        "Url": "Url",
+        "Code":"Code",
+        "Artifact":"Build Artifact"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },    
+    {
+      "name": "swaggerlocation",
+      "type": "string",
+      "label": "API Definition Location URL",
+      "required": true,
+      "helpMarkDown": "Make sure the URL is connectable from the build servers",
+      "defaultValue": "",
+      "visibleRule": "SwaggerPicker=Url"
+    },
+    {
+      "name": "swaggerartifact",
+      "type": "string",
+      "label": "API Definition Artifact",
+      "required": true,
+      "helpMarkDown": "API Definition Artifact. For instance $(System.DefaultWorkingDirectory)/<yourswagger.json>",
+      "defaultValue": "",
+      "visibleRule": "SwaggerPicker=Artifact"
+    },
+    {
+      "name": "swaggercode",
+      "type": "multiline",
+      "label": "API Definition Body",
+      "required": true,
+      "helpMarkDown": "Insert the full API definition",
+      "defaultValue": "",
+      "visibleRule": "SwaggerPicker=Code"
+    },
+    {
+      "name": "targetapi",
+      "type": "string",
+      "label": "API Name",
+      "required": true,
+      "helpMarkDown": "New or existing API"
+    },
+    {
+      "name": "version",
+      "type": "string",
+      "label": "API Version",
+      "required": true,
+      "helpMarkDown": "API version",
+      "defaultValue": "v1"
+    },
+    {
+      "name": "subscriptionRequired",
+      "type": "boolean",
+      "label": "Subscription Required",
+      "helpMarkDown": "Subscription key is required to access this API",
+      "defaultValue":true
+    },
+    {
+      "name": "NewRevision",
+      "type": "boolean",
+      "label": "Create a new revision",
+      "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
+      "defaultValue":true
+    },
+    {
+      "name": "apiRevisionDescription",
+      "type": "string",
+      "label": "API revision description",
+      "required": true,
+      "helpMarkDown": "Release notes of the new revision",
+      "defaultValue": "N/A",
+      "visibleRule": "NewRevision=true"
+    },
+    {
+      "name": "scheme",
+      "type": "pickList",
+      "label": "Versioning scheme",
+      "required": true,
+      "helpMarkDown": "How should the API version be transmitted by consumers",
+      "defaultValue": "Path",
+      "options": {
+        "Path": "Path",
+        "Header":"Header",
+        "Query":"Query String"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "visibleRule": "version=v1"
+    },    
+    {
+      "name": "VersionHeader",
+      "type": "string",
+      "label": "Version Header",
+      "required": true,
+      "helpMarkDown": "Version Header",
+      "defaultValue": "Api-Version",
+      "visibleRule": "scheme = Header && version=v1"
+    },
+    {
+      "name": "QueryParam",
+      "type": "string",
+      "label": "Version query parameter",
+      "required": true,
+      "helpMarkDown": "Version query parameter",
+      "defaultValue": "api-version",
+      "visibleRule": "scheme = Query && version=v1"
+    },
+    {
+      "name": "pathapi",
+      "type": "string",
+      "label": "API URL suffix",
+      "required": false,
+      "helpMarkDown": "API URL suffix"
+    },
+    {
+      "name": "TemplateSelector",
+      "type": "pickList",
+      "label": "Start from Policy Template",
+      "required": false,
+      "helpMarkDown": "Optionally choose a starting policy template to apply to the API",
+      "defaultValue": "None",
+      "options": {
+        "None": "None",
+        "CacheLookup": "Cache Lookup",
+        "CORS": "CORS",
+        "Custom": "Custom",
+        "Basic": "Basic",
+        "JWT": "JWT",
+        "IP": "IP",
+        "RateByKey": "RateByKey",
+        "QuotaByKey": "QuotaByKey",
+        "HeaderCheck": "HeaderCheck"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "None",
+      "type": "multiLine",
+      "label": "None",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "helpMarkDown": "",
+      "visibleRule": "TemplateSelector = NAN"
+    },
+    {
+      "name": "Custom",
+      "type": "multiline",
+      "label": "None",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "helpMarkDown": "",
+      "visibleRule": "TemplateSelector = Custom"
+    },
+    {
+      "name": "CacheLookup",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t\t<cache-store duration='3600' />\n\t </outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Cache Lookup Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = CacheLookup"
+    },
+    {
+      "name": "Basic",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<authentication-basic username='username' password='password' />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Basic Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = Basic"
+    },
+    {
+      "name": "CORS",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<cors>\n\t\t\t<allowed-origins><origin>*</origin></allowed-origins>\n\t\t\t<allowed-methods><method>*</method></allowed-methods>\n\t\t\t<allowed-headers><header>*</header></allowed-headers>\n\t\t</cors>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default CORS Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = CORS"
+    },
+    {
+      "name": "JWT",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<validate-jwt header-name='Insert HTTP Header Name here' failed-validation-httpcode='401' failed-validation-error-message='Unauthorized'>\n\t\t\t<issuer-signing-keys><key>Base64 Encoded Key 1</key>\n\t\t\t</issuer-signing-keys>\n\t\t\t<audiences><audience>Audience 1</audience>\n\t\t\t</audiences>\n\t\t<issuers>\n\t\t\t<issuer>Issuer 1</issuer>\n\t\t</issuers>\n\t\t<required-claims><claim name='claim1' match='all'><value>value1</value><value>value2</value></claim>\n\t\t\t</required-claims>\n\t\t</validate-jwt>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default JWT validation Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = JWT"
+    },
+    {
+      "name": "IP",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<ip-filter action='allow | forbid'>\n\t\t\t<address>address</address>\n\t\t\t<address-range from='address' to='address' />\n\t\t</ip-filter>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default IP Filtering Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = IP"
+    },
+    {
+      "name": "RateByKey",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<rate-limit-by-key calls='5' renewal-period='60' counter-key='@(context.Request.IpAddress)'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Rate by key Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = RateByKey"
+    },
+    {
+      "name": "QuotaByKey",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<quota-by-key calls='10000' bandwidth='40000' renewal-period='3600'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Quota by key Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = QuotaByKey"
+    },
+    {
+      "name": "HeaderCheck",
+      "type": "multiLine",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<check-header name='header name' failed-check-httpcode='http status code to return on failure' failed-check-error-message='error message to return' ignore-case='true | false'>\n\t\t\t<value>value</value>\n\t\t</check-header>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Header Check Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = HeaderCheck"
+    },
+    {
+      "name": "MicrosoftApiManagementAPIVersion",
+      "type": "pickList",
+      "label": "Microsoft API Version",
+      "required": true,
+      "helpMarkDown": "Which version of the Management API should be used?",
+      "defaultValue": "2019-01-01",
+      "options": {                
+        "2019-01-01":"2019-01-01"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      }
+    }
+
+  ],
+  "dataSourceBindings": [
+    {
+      "target": "ResourceGroupName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "dataSourceName": "AzureResourceGroups"
+    },
+    {
+      "name": "ApiPortals",
+      "target": "ApiPortalName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/$(endpoint.subscriptionId)/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service?api-version=2016-07-07",
+      "resultSelector": "jsonpath:$.value[*].name",
+      "parameters": {
+        "ResourceGroupName": "$(ResourceGroupName)"
+      }
+    },
+    {
+      "target": "product1",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/products?api-version=2017-03-01",
+      "resultSelector": "jsonpath:$.value[*]",
+      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+    },
+    {
+      "target": "oauth",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/authorizationServers?api-version=2018-01-01",
+      "resultSelector": "jsonpath:$.value[*]",
+      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+    },
+    {
+      "target": "oid",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/openidConnectProviders?api-version=2018-01-01",
+      "resultSelector": "jsonpath:$.value[*]",
+      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+    }    
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "apimversioned.ps1"
+    }
+  }
+}
