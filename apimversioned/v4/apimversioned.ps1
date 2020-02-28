@@ -226,6 +226,7 @@ shared VNET
 					Invoke-WebRequest -UseBasicParsing $importurl -Method Patch -ContentType "application/vnd.swagger.doc+json" -Body $swagger -Headers $headers
 				}
 				else {
+					$importurl=$importurl.Substring(0,$importurl.IndexOf("api-version"))+"api-version=2018-06-01-preview"
 					if($Format -eq 'json')
 					{
 						$contentFormat="openapi+json"
@@ -234,7 +235,7 @@ shared VNET
 					}				
 					$openAPIBody='{"contentFormat":"'+$contentFormat+'","contentValue":"'+$swagger+'"}'
 					Write-Host "OpenAPI body is $($openAPIBdoy)"
-					Invoke-WebRequest -UseBasicParsing $importurl -Method Patch -ContentType "application/json" -Body $openAPIBody -Headers $headers
+					Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/json" -Body $openAPIBody -Headers $headers
 				}
 				
 			}
@@ -320,6 +321,7 @@ shared VNET
 					Invoke-WebRequest -UseBasicParsing $importurl -Method Patch -ContentType "application/vnd.swagger.doc+json" -Body $swagger -Headers $headers	
 				}
 				else {
+					$importurl=$importurl.Substring(0,$importurl.IndexOf("api-version"))+"api-version=2018-06-01-preview"
 					if($Format -eq 'json')
 					{
 						$contentFormat="openapi+json"
@@ -328,7 +330,7 @@ shared VNET
 					}				
 					$openAPIBody='{"contentFormat":"'+$contentFormat+'","contentValue":"'+$swagger+'"}'
 					Write-Host "API Body is $($openAPIBody)"
-					Invoke-WebRequest -UseBasicParsing $importurl -Method Patch -ContentType "application/json" -Body $openAPIBody -Headers $headers
+					Invoke-WebRequest -UseBasicParsing $importurl -Method Put -ContentType "application/json" -Body $openAPIBody -Headers $headers
 
 				}
 				
