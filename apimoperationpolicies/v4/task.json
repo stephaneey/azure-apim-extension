@@ -1,0 +1,226 @@
+{
+  "id": "a67d9016-264e-4df8-b47e-85ea302d09b3",
+  "name": "apimoperationpolicies",
+  "friendlyName": "API Management - Set or update an operation policy",
+  "description": "API Management - Set or update an operation policy",
+  "author": "Stephane Eyskens",
+  "helpMarkDown": "API Management - Set or update an operation policy",
+  "category": "Utility",
+  "visibility": [
+    "Release"
+  ],
+  "demands": [],
+  "version": {
+    "Major": "4",
+    "Minor": "0",
+    "Patch": "0"
+  },
+  "minimumAgentVersion": "1.95.0",
+  "instanceNameFormat": "API Management - Set or update an operation policy $(message)",
+  "inputs": [
+    {
+      "name": "ConnectedServiceNameARM",
+      "type": "connectedService:AzureRM",
+      "label": "Azure Subscription",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "Azure Resource Manager subscription to configure before running PowerShell"
+
+    },
+    {
+      "name": "ResourceGroupName",
+      "label": "Resource Group",
+      "type": "pickList",
+      "required": true,
+      "helpMarkDown": "Select resource group which contains the API portal",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "ApiPortalName",
+      "type": "pickList",
+      "label": "API Portal",
+      "required": true,
+      "helpMarkDown": "The API Portal you want to deploy against",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "ApiName",
+      "type": "pickList",
+      "label": "API",
+      "required": true,
+      "helpMarkDown": "The API you want to list operations",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "OperationName",
+      "type": "pickList",
+      "label": "Operation",
+      "required": true,
+      "helpMarkDown": "The operation you want to set or create policy",
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "CurrentRevision",
+      "type": "boolean",
+      "label": "Use current revision",
+      "helpMarkDown": "When set to false, the operation-level policy is applied to the last revision, else to the current one, so directly impacting consumers",
+      "defaultValue":false
+    },
+    {
+      "name": "TemplateSelector",
+      "type": "pickList",
+      "label": "Start from Policy Template",
+      "required": false,
+      "helpMarkDown": "Optionally choose a starting policy template to apply to the operation. Make sure you type in valid XML and to adjust it to your needs.",
+      "defaultValue": "None",
+      "options": {
+        "None": "None",
+        "Basic": "Basic",
+        "Custom": "Custom",
+        "JWT": "JWT",
+        "IP": "IP",
+        "RateAndQuota": "RateAndQuota",
+        "RateByKey": "RateByKey",
+        "QuotaByKey": "QuotaByKey",
+        "HeaderCheck": "HeaderCheck"
+      },
+      "properties": {
+        "EditableOptions": "True"
+      }
+    },
+    {
+      "name": "None",
+      "type": "string",
+      "label": "None",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "helpMarkDown": "",
+      "visibleRule": "TemplateSelector = NAN"
+    },
+    {
+      "name": "Custom",
+      "type": "multiline",
+      "label": "None",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "helpMarkDown": "",
+      "visibleRule": "TemplateSelector = Custom"
+    },
+    {
+      "name": "Basic",
+      "type": "multiline",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<authentication-basic username='username' password='password' />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Basic Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = Basic"
+    },
+    {
+      "name": "JWT",
+      "type": "multiline",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<validate-jwt header-name='Insert HTTP Header Name here' failed-validation-httpcode='401' failed-validation-error-message='Unauthorized'>\n\t\t\t<issuer-signing-keys><key>Base64 Encoded Key 1</key>\n\t\t\t</issuer-signing-keys>\n\t\t\t<audiences><audience>Audience 1</audience>\n\t\t\t</audiences>\n\t\t<issuers>\n\t\t\t<issuer>Issuer 1</issuer>\n\t\t</issuers>\n\t\t<required-claims><claim name='claim1' match='all'><value>value1</value><value>value2</value></claim>\n\t\t\t</required-claims>\n\t\t</validate-jwt>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default JWT validation Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = JWT"
+    },
+    {
+      "name": "IP",
+      "type": "multiline",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<ip-filter action='allow | forbid'>\n\t\t\t<address>address</address>\n\t\t\t<address-range from='address' to='address' />\n\t\t</ip-filter>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default IP Filtering Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = IP"
+    },
+    {
+      "name": "RateAndQuota",
+      "type": "multiline",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<rate-limit-by-key calls='5' renewal-period='60' counter-key='@(context.Request.IpAddress)'/>\n\t\t<quota-by-key calls='10000' counter-key='@(context.Request.IpAddress)' renewal-period='604800'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Rate by key Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = RateAndQuota"
+    },
+    {
+      "name": "RateByKey",
+      "type": "multiline",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<rate-limit-by-key calls='5' renewal-period='60' counter-key='@(context.Request.IpAddress)'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Rate by key Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = RateByKey"
+    },
+    {
+      "name": "QuotaByKey",
+      "type": "multiline",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<  calls='10000' bandwidth='40000' counter-key='@(context.Request.IpAddress)' renewal-period='3600'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Quota by key Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = QuotaByKey"
+    },
+    {
+      "name": "HeaderCheck",
+      "type": "multiline",
+      "label": "Policy",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t<check-header name='header name' failed-check-httpcode='http status code to return on failure' failed-check-error-message='error message to return' ignore-case='true | false'>\n\t\t\t<value>value</value>\n\t\t</check-header>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "required": false,
+      "helpMarkDown": "Default Header Check Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
+      "visibleRule": "TemplateSelector = HeaderCheck"
+    }
+  ],
+  "dataSourceBindings": [
+    {
+      "target": "ResourceGroupName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "dataSourceName": "AzureResourceGroups"
+    },
+    {
+      "name": "ApiPortals",
+      "target": "ApiPortalName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/$(endpoint.subscriptionId)/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service?api-version=2016-07-07",
+      "resultSelector": "jsonpath:$.value[*].name",
+      "parameters": {
+        "ResourceGroupName": "$(ResourceGroupName)"
+      }
+    },
+    {
+      "name": "Apis",
+      "target": "ApiName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/$(endpoint.subscriptionId)/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ServiceName)/apis?api-version=2017-03-01",
+      "resultSelector": "jsonpath:$.value[*]",
+      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{name}}}\" }",
+      "parameters": {
+        "ResourceGroupName": "$(ResourceGroupName)",
+        "ServiceName": "$(ApiPortalName)"
+      }
+    },
+    {
+      "name": "Operations",
+      "target": "OperationName",
+      "endpointId": "$(ConnectedServiceNameARM)",
+      "endpointUrl": "{{endpoint.url}}/subscriptions/$(endpoint.subscriptionId)/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ServiceName)/apis/$(ApiId)/operations?api-version=2017-03-01",
+      "resultSelector": "jsonpath:$.value[*]",
+      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }",
+      "parameters": {
+        "ResourceGroupName": "$(ResourceGroupName)",
+        "ServiceName": "$(ApiPortalName)",
+        "ApiId": "$(ApiName)"
+      }
+    }  
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "apimoperationpolicies.ps1"
+    }
+  }
+}
