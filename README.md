@@ -8,7 +8,7 @@ is good to associate the release of your backends APIs with their corresponding 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
 ## v3.4.4
-* Support of API revisions
+* Support of API revisions: versioned APIs + Operation-level policies now support revisions.
 ## v3.4.1
 * Fixed a bug when redeploying existing version
 * Added the possibility to use dots in version numbers.
