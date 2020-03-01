@@ -59,8 +59,12 @@ If you do not have such connectivity, you should fallback to in-line Swagger (pr
 ![Config Transform](images/configtransform.png "Config Transform")
 
   <br/>where in this case, the APIHost variable is defined as a enviromnment-scoped release variable. 
+# API revisions and versions
+An API revision allows you to develop new features on existing APIs seamlessly for API developers, until you decide to promote the revision as the "current one" or as a new API version. 
+API version allows you to ensure backward compatibility towards API developers by maintaining multiple versions of the same API. You usually create a version where there is a "breaking change". This extension allows you to deal with both revisions & versions but the promotion of a revision remains a separate process. You might do it through Azure Cli (as a separate step in your pipeline) or any other ad-hoc way.
 
-
+# Generic remarks
+The extension is heavily based on the import feature of API Management. This means that the OpenAPI definition of the backend services is self-sufficient for anything that relates to the facade APIs. Properties such as Display Name and Description will be applied by the import process. 
 # Policies
 A few tasks allow to set policies at product and/or API level. They come with some pre-defined policies which you can override to adjust them to specific needs. You can easily use other policies by getting the default boilerplate config from the APIM Portal.
 # Tasks included in the extension
