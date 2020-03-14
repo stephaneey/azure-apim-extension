@@ -302,7 +302,7 @@ shared VNET
 						{
 							Write-Host "Making new revision current"
 							$releaseId=[guid]::NewGuid()
-							$currentRevReleaseBody='{"properties":{"apiId":"/apis/'+$($apiVersionIdentifier)+';rev='+$($currentRevision)+'","notes":"'+$CurrentRevisionNotes+'"}}'
+							$currentRevReleaseBody='{"properties":{"apiId":"/apis/'+$($apiVersionIdentifier)+';rev='+$($rev)+'","notes":"'+$CurrentRevisionNotes+'"}}'
 							$currentRevisionUrl="$($baseurl)/apis/$($apiVersionIdentifier);rev=$($rev)/releases/$($releaseId)?api-version=$($MicrosoftApiManagementAPIVersion)"
 							Write-Host $currentRevisionUrl
 							Write-Host $currentRevReleaseBody
