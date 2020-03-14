@@ -7,12 +7,17 @@ The purpose of this extension is to bring Azure API Management into VSTS as part
 is good to associate the release of your backends APIs with their corresponding facade APIs published against the API Gateway. On top of the API Management integration, the extension also 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
+<<<<<<< HEAD
 ## v3.4.6
 * Making it possible to publish new revision as current revision
 ## v3.4.5
 * Support of API revisions in operation-level policies
 * Support of API revisions in API-level policies
 * Support of API revisions for versioned APIs
+=======
+## v3.4.4
+* Support of API revisions: versioned APIs + Operation-level policies now support revisions.
+>>>>>>> c700aa8852e9858b30773ac4eb794eaa1cf21976
 ## v3.4.1
 * Fixed a bug when redeploying existing version
 * Added the possibility to use dots in version numbers.
@@ -63,10 +68,18 @@ If you do not have such connectivity, you should fallback to in-line Swagger (pr
 ![Config Transform](images/configtransform.png "Config Transform")
 
   <br/>where in this case, the APIHost variable is defined as a enviromnment-scoped release variable. 
+# API revisions and versions
+An API revision allows you to develop new features on existing APIs seamlessly for API developers, until you decide to promote the revision as the "current one" or as a new API version. 
+API version allows you to ensure backward compatibility towards API developers by maintaining multiple versions of the same API. You usually create a version where there is a "breaking change". This extension allows you to deal with both revisions & versions but the promotion of a revision remains a separate process. You might do it through Azure Cli (as a separate step in your pipeline) or any other ad-hoc way.
 
+<<<<<<< HEAD
 # Generic remark
 API description and display name come from the OpenAPI definition itself, that's the reason why these settings are not captured by the tasks.
 
+=======
+# Generic remarks
+The extension is heavily based on the import feature of API Management. This means that the OpenAPI definition of the backend services is self-sufficient for anything that relates to the facade APIs. Properties such as Display Name and Description will be applied by the import process. 
+>>>>>>> c700aa8852e9858b30773ac4eb794eaa1cf21976
 # Policies
 A few tasks allow to set policies at product and/or API level. They come with some pre-defined policies which you can override to adjust them to specific needs. You can easily use other policies by getting the default boilerplate config from the APIM Portal.
 # Tasks included in the extension
