@@ -300,9 +300,14 @@ shared VNET
 						Write-Host "Revision $($rev) created"
 						if($MakeNewRevisionCurrent -eq $true)
 						{
+							Write-Host "Making new revision current"
 							$releaseId=[guid]::NewGuid()
-							$currentRevReleaseBody='{"apiId":"/apis/'+$($apiVersionIdentifier)+';rev='+$($currentRevision)+'","notes":"'+$CurrentRevisionNotes+'"}'
-							Invoke-WebRequest -ContentType "application/json" -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier);rev=$($rev)/releases/$($releaseId)?api-version=$($MicrosoftApiManagementAPIVersion)" -Headers $headers -Method Put -Body $currentRevReleaseBody
+							$currentRevReleaseBody='{"properties":{"apiId":"/apis/'+$($apiVersionIdentifier)+';rev='+$($currentRevision)+'","notes":"'+$CurrentRevisionNotes+'"}}'
+							$currentRevisionUrl="$($baseurl)/apis/$($apiVersionIdentifier);rev=$($rev)/releases/$($releaseId)?api-version=$($MicrosoftApiManagementAPIVersion)"
+							Write-Host $currentRevisionUrl
+							Write-Host $currentRevReleaseBody
+							$resp=Invoke-WebRequest -ContentType "application/json" -UseBasicParsing -Uri $currentRevisionUrl -Headers $headers -Method Put -Body $currentRevReleaseBody
+							Write-Host $resp
 						}
                     }
 					else
