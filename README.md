@@ -7,8 +7,12 @@ The purpose of this extension is to bring Azure API Management into VSTS as part
 is good to associate the release of your backends APIs with their corresponding facade APIs published against the API Gateway. On top of the API Management integration, the extension also 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
-## v3.4.4
-* Support of API revisions
+## v3.4.6
+* Making it possible to publish new revision as current revision
+## v3.4.5
+* Support of API revisions in operation-level policies
+* Support of API revisions in API-level policies
+* Support of API revisions for versioned APIs
 ## v3.4.1
 * Fixed a bug when redeploying existing version
 * Added the possibility to use dots in version numbers.
@@ -60,6 +64,8 @@ If you do not have such connectivity, you should fallback to in-line Swagger (pr
 
   <br/>where in this case, the APIHost variable is defined as a enviromnment-scoped release variable. 
 
+# Generic remark
+API description and display name come from the OpenAPI definition itself, that's the reason why these settings are not captured by the tasks.
 
 # Policies
 A few tasks allow to set policies at product and/or API level. They come with some pre-defined policies which you can override to adjust them to specific needs. You can easily use other policies by getting the default boilerplate config from the APIM Portal.

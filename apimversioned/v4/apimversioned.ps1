@@ -14,6 +14,8 @@ shared VNET
 		$Endpoint = Get-VstsEndpoint -Name $arm -Require	
 		$Cloud= Get-VstsInput -Name CloudEnvironment
 		$NewRevision=Get-VstsInput -Name NewRevision
+		$MakeNewRevisionCurrent=Get-VstsInput -Name MakeNewRevisionCurrent
+		$CurrentRevisionNotes=Get-VstsInput -Name CurrentRevisionNotes
 		$currentRevision=1
 		$subscriptionRequired=Get-VstsInput -Name subscriptionRequired
 		$apiRevisionDescription=Get-VstsInput -Name apiRevisionDescription
@@ -296,6 +298,12 @@ shared VNET
 						Write-Host "New revision body is $($revJson)"
                         Invoke-WebRequest -ContentType "application/json" -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier);rev=$($rev)?api-version=$($MicrosoftApiManagementAPIVersion)" -Headers $headers -Method Put -Body $revJson
 						Write-Host "Revision $($rev) created"
+						if($MakeNewRevisionCurrent -eq $true)
+						{
+							$releaseId=[guid]::NewGuid()
+							$currentRevReleaseBody='{"apiId":"/apis/'+$($apiVersionIdentifier)+';rev='+$($currentRevision)+'","notes":"'+$CurrentRevisionNotes+'"}'
+							Invoke-WebRequest -ContentType "application/json" -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier);rev=$($rev)/releases/$($releaseId)?api-version=$($MicrosoftApiManagementAPIVersion)" -Headers $headers -Method Put -Body $currentRevReleaseBody
+						}
                     }
 					else
                     {

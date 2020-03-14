@@ -12,7 +12,7 @@
   "demands": [],
   "version": {
     "Major": "4",
-    "Minor": "0",
+    "Minor": "1",
     "Patch": "0"
   },
   "preview": "true",
@@ -211,6 +211,23 @@
       "label": "Create a new revision",
       "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
       "defaultValue":true
+    },
+    {
+      "name": "MakeNewRevisionCurrent",
+      "type": "boolean",
+      "label": "Make the new revision current",
+      "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
+      "defaultValue":false,
+      "visibleRule": "NewRevision=true"
+    },
+    {
+      "name": "CurrentRevisionNotes",
+      "type": "string",
+      "label": "Notes to push to Change Feed",
+      "required": false,
+      "helpMarkDown": "Release notes of the new revision",
+      "defaultValue": "N/A",
+      "visibleRule": "MakeNewRevisionCurrent=true"
     },
     {
       "name": "apiRevisionDescription",
