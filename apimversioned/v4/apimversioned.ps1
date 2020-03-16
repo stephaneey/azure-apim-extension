@@ -292,7 +292,7 @@ shared VNET
 					Write-Host "Current revision is $($currentRevision)"
                     if($NewRevision -eq $true)
                     {						
-						$rev=$revisions.count+1
+						$rev=([int]$revisions[-1].value.apiRevision)+1;
 						Write-Host "New revision is $($rev)"						
 						$revJson='{"properties":{"sourceApiId":"'+$($baseurl)+'/apis/'+$($apiVersionIdentifier)+';rev='+$($currentRevision)+'","apiRevisionDescription":"'+$($apiRevisionDescription)+'"}}'
 						Write-Host "New revision body is $($revJson)"
