@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "id": "apim",
-  "name": "API Management Suite",
-  "version": "3.4.9",  
+  "id": "apim_vd",
+  "name": "TEST. API Management Suite",
+  "version": "3.4.10",
   "publisher": "stephane-eyskens",
   "tags": [
     "API",
@@ -69,11 +69,13 @@
       "path": "apimglobalpolicy"
     },
     {
+      "path": "apimreleaserevision"
+    },
+    {
       "path": "images",
       "addressable": true
     }
   ],
-
   "contributions": [
     {
       "id": "apim",
@@ -183,6 +185,16 @@
       ],
       "properties": {
         "name": "apimglobalpolicy"
+      }
+    },
+    {
+      "id": "apimreleaserevision",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "apimreleaserevision"
       }
     }
   ]

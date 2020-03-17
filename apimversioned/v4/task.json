@@ -28,16 +28,16 @@
       "helpMarkDown": "Azure Resource Manager subscription to configure before running PowerShell"
     },
     {
-      "name":"CloudEnvironment",
-      "type":"string",
-      "label":"Azure Cloud",
-      "defaultValue":"https://login.windows.net/",
-      "required":true,
+      "name": "CloudEnvironment",
+      "type": "string",
+      "label": "Azure Cloud",
+      "defaultValue": "https://login.windows.net/",
+      "required": true,
       "helpMarkDown": "Keep the default if you're not using a Sovereign Cloud",
       "options": {
         "China": "https://login.chinacloudapi.cn",
-        "US Gov.":"https://login.microsoftonline.us",
-        "Germany":"https://login.microsoftonline.de"        
+        "US Gov.": "https://login.microsoftonline.us",
+        "Germany": "https://login.microsoftonline.de"
       }
     },
     {
@@ -69,7 +69,7 @@
       "defaultValue": "v2",
       "options": {
         "v2": "v2",
-        "v3":"v3"        
+        "v3": "v3"
       }
     },
     {
@@ -81,7 +81,7 @@
       "defaultValue": "json",
       "options": {
         "json": "json",
-        "yaml":"yaml"        
+        "yaml": "yaml"
       },
       "visibleRule": "OpenAPISpec=v3"
     },
@@ -111,8 +111,8 @@
       "defaultValue": "None",
       "options": {
         "None": "None",
-        "OAuth":"OAuth",
-        "OpenID":"OpenID Connect"
+        "OAuth": "OAuth",
+        "OpenID": "OpenID Connect"
       },
       "properties": {
         "EditableOptions": "True"
@@ -149,13 +149,13 @@
       "defaultValue": "Url",
       "options": {
         "Url": "Url",
-        "Code":"Code",
-        "Artifact":"Build Artifact"
+        "Code": "Code",
+        "Artifact": "Build Artifact"
       },
       "properties": {
         "EditableOptions": "True"
       }
-    },    
+    },
     {
       "name": "swaggerlocation",
       "type": "string",
@@ -203,21 +203,21 @@
       "type": "boolean",
       "label": "Subscription Required",
       "helpMarkDown": "Subscription key is required to access this API",
-      "defaultValue":true
+      "defaultValue": true
     },
     {
       "name": "NewRevision",
       "type": "boolean",
       "label": "Create a new revision",
       "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
-      "defaultValue":true
+      "defaultValue": true
     },
     {
       "name": "MakeNewRevisionCurrent",
       "type": "boolean",
       "label": "Make the new revision current",
       "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
-      "defaultValue":false,
+      "defaultValue": false,
       "visibleRule": "NewRevision=true"
     },
     {
@@ -247,14 +247,14 @@
       "defaultValue": "Path",
       "options": {
         "Path": "Path",
-        "Header":"Header",
-        "Query":"Query String"
+        "Header": "Header",
+        "Query": "Query String"
       },
       "properties": {
         "EditableOptions": "True"
       },
       "visibleRule": "version=v1"
-    },    
+    },
     {
       "name": "VersionHeader",
       "type": "string",
@@ -398,14 +398,13 @@
       "required": true,
       "helpMarkDown": "Which version of the Management API should be used?",
       "defaultValue": "2019-01-01",
-      "options": {                
-        "2019-01-01":"2019-01-01"
+      "options": {
+        "2019-01-01": "2019-01-01"
       },
       "properties": {
         "EditableOptions": "True"
       }
     }
-
   ],
   "dataSourceBindings": [
     {
@@ -443,7 +442,7 @@
       "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/openidConnectProviders?api-version=2018-01-01",
       "resultSelector": "jsonpath:$.value[*]",
       "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
-    }    
+    }
   ],
   "execution": {
     "PowerShell3": {

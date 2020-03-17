@@ -1,0 +1,165 @@
+{
+    "id": "e5241311-38fd-4693-b281-aac9508d6e62",
+    "name": "apimreleaserevision",
+    "friendlyName": "API Management - Make Revision Current",
+    "description": "Set released revision as a current",
+    "author": "Vitalijus Dobilas",
+    "helpMarkDown": "API Management - Make Revision Current",
+    "category": "Utility",
+    "visibility": [
+        "Release"
+    ],
+    "demands": [],
+    "version": {
+        "Major": "4",
+        "Minor": "0",
+        "Patch": "0"
+    },
+    "preview": "true",
+    "minimumAgentVersion": "1.95.0",
+    "instanceNameFormat": "API Management - Release a Revision $(message)",
+    "inputs": [
+        {
+            "name": "ConnectedServiceNameARM",
+            "type": "connectedService:AzureRM",
+            "label": "Azure Subscription",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Azure Resource Manager subscription to configure before running PowerShell"
+        },
+        {
+            "name": "CloudEnvironment",
+            "type": "string",
+            "label": "Azure Cloud",
+            "defaultValue": "https://login.windows.net/",
+            "required": true,
+            "helpMarkDown": "Keep the default if you're not using a Sovereign Cloud",
+            "options": {
+                "China": "https://login.chinacloudapi.cn",
+                "US Gov.": "https://login.microsoftonline.us",
+                "Germany": "https://login.microsoftonline.de"
+            }
+        },
+        {
+            "name": "ResourceGroupName",
+            "label": "Resource Group",
+            "type": "pickList",
+            "required": true,
+            "helpMarkDown": "Select resource group which contains the API portal",
+            "properties": {
+                "EditableOptions": "True"
+            }
+        },
+        {
+            "name": "ApiPortalName",
+            "type": "pickList",
+            "label": "API Portal",
+            "required": true,
+            "helpMarkDown": "The API Portal you want to deploy against",
+            "properties": {
+                "EditableOptions": "True"
+            }
+        },
+        {
+            "name": "TargetAPI",
+            "type": "string",
+            "label": "API Name",
+            "required": true,
+            "helpMarkDown": "Existing API"
+        },
+        {
+            "name": "TargetAPIVersion",
+            "type": "string",
+            "label": "API Version",
+            "required": false,
+            "helpMarkDown": "API version",
+            "defaultValue": "N/A"
+        },
+        {
+            "name": "RevisionSelectPolicy",
+            "type": "pickList",
+            "label": "Revision select policy",
+            "required": true,
+            "helpMarkDown": "What revision to mark as a current?",
+            "defaultValue": "Newest",
+            "options": {
+                "Newest": "Newest",
+                "Specific": "Specific"
+            },
+            "properties": {
+                "EditableOptions": "false"
+            }
+        },
+        {
+            "name": "Revision",
+            "type": "string",
+            "label": "Revision ID",
+            "required": true,
+            "helpMarkDown": "Specify exact revision ID to mark as current",
+            "defaultValue": "N/A",
+            "visibleRule": "revisionSelectPolicy=Specific"
+        },
+        {
+            "name": "RevisionReleaseNotes",
+            "type": "string",
+            "label": "Notes to push to Change Feed",
+            "required": false,
+            "helpMarkDown": "Release notes of the revision",
+            "defaultValue": "N/A"
+        },
+        {
+            "name": "MicrosoftApiManagementAPIVersion",
+            "type": "pickList",
+            "label": "Microsoft API Version",
+            "required": true,
+            "helpMarkDown": "Which version of the Management API should be used?",
+            "defaultValue": "2019-01-01",
+            "options": {
+                "2019-01-01": "2019-01-01"
+            }
+        }
+    ],
+    "dataSourceBindings": [
+        {
+            "target": "ResourceGroupName",
+            "endpointId": "$(ConnectedServiceNameARM)",
+            "dataSourceName": "AzureResourceGroups"
+        },
+        {
+            "name": "ApiPortals",
+            "target": "ApiPortalName",
+            "endpointId": "$(ConnectedServiceNameARM)",
+            "endpointUrl": "{{endpoint.url}}/subscriptions/$(endpoint.subscriptionId)/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service?api-version=2016-07-07",
+            "resultSelector": "jsonpath:$.value[*].name",
+            "parameters": {
+                "ResourceGroupName": "$(ResourceGroupName)"
+            }
+        },
+        {
+            "target": "product1",
+            "endpointId": "$(ConnectedServiceNameARM)",
+            "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/products?api-version=2017-03-01",
+            "resultSelector": "jsonpath:$.value[*]",
+            "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+        },
+        {
+            "target": "oauth",
+            "endpointId": "$(ConnectedServiceNameARM)",
+            "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/authorizationServers?api-version=2018-01-01",
+            "resultSelector": "jsonpath:$.value[*]",
+            "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+        },
+        {
+            "target": "oid",
+            "endpointId": "$(ConnectedServiceNameARM)",
+            "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/openidConnectProviders?api-version=2018-01-01",
+            "resultSelector": "jsonpath:$.value[*]",
+            "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
+        }
+    ],
+    "execution": {
+        "PowerShell3": {
+            "target": "apimreleaserevision.ps1"
+        }
+    }
+}
