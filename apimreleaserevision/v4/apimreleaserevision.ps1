@@ -17,11 +17,30 @@ try {
     $targetAPI = Get-VstsInput -Name TargetAPI
     $targetAPIVersion = Get-VstsInput -Name TargetAPIVersion
     $revisionSelectPolicy = Get-VstsInput -Name RevisionSelectPolicy
-    $revision = Get-VstsInput -Name Revision
-    $revisionReleaseNotes = Get-VstsInput -Name RevisionReleaseNotes
+    $revision = Get-VstsInput -Name Revision    
+    $revisionReleaseNotes = Get-VstsInput -Name RevisionReleaseNotes    
+    $oldRevisionPolicy = Get-VstsInput -Name OldRevisionPolicy
     $apimVersion = Get-VstsInput -Name MicrosoftApiManagementAPIVersion
 
     $Endpoint = Get-VstsEndpoint -Name $subscription -Require
+
+    # Output variables for Debug purposes
+    Write-Host "-----------Variables-----------"
+    Write-Host "API Management Resource group: $($resourceGroupName)"
+    Write-Host "API Management instance: $($apiPortalName)"
+    Write-Host "API Management version: $($apimVersion)"
+    Write-Host "API Name: $($targetAPI)"
+    if ($null -ne $targetAPIVersion) {
+        Write-Host "API Version: $($targetAPIVersion)"
+    } else {
+        Write-Host "API Version: N/A"
+    }
+    Write-Host "Revision select policy: $($revisionSelectPolicy)"
+    Write-Host "Specified revision: $($revision)"
+    Write-Host "Revision release notes: $($revisionReleaseNotes)"
+    Write-Host "What to do with old revisions?: $($oldRevisionPolicy)"
+
+    Write-Host "-----------Preparations-----------"
 
     $apiVersionIdentifier = "$($targetAPI)$($targetAPIVersion)" -replace '\.', '-'
 
@@ -34,11 +53,10 @@ try {
     "&client_secret=$($secret)"
 
     try {
-        $resp = Invoke-WebRequest -UseBasicParsing -Uri "$($cloudEnv)/$($tenant)/oauth2/token" `
-            -Method POST `
-            -Body $body | ConvertFrom-Json    
-
-        $headers = @{ Authorization = "Bearer $($resp.access_token)" }		
+        Write-Host "Authenticating"
+        $resp = Invoke-WebRequest -UseBasicParsing -Uri "$($cloudEnv)/$($tenant)/oauth2/token" -Method POST -Body $body | ConvertFrom-Json
+        $headers = @{ Authorization = "Bearer $($resp.access_token)" }
+        Write-Host "Auth success"
     } catch [System.Net.WebException] {
         $er = $_.ErrorDetails.Message.ToString() | ConvertFrom-Json
         write-host $er.error.details
@@ -50,45 +68,75 @@ try {
 
     try {			
         Write-Host "Checking if exists: $($targeturl)"
-        Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers | ConvertFrom-Json
-        Write-Host "API exists"        
+        $resp = Invoke-WebRequest -UseBasicParsing -Uri $targeturl -Headers $headers | ConvertFrom-Json
+        Write-Host "API exists"
     } catch [System.Net.WebException] {
         Write-Host "API not found"
         throw
     }
 
-    if ($revisionSelectPolicy -eq "Newest") {
-        Write-Host "Getting list of revisions"
+    $isNewestCurrent = $false
+    if ($revisionSelectPolicy -eq "Newest") {        
+        Write-Host "-----------Resolving newest revision-----------"
 
-        $revisionList = Invoke-WebRequest -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier)/revisions?api-version=$($apimVersion)" -Headers $headers | ConvertFrom-Json
-        $revisionList = $revisionList.value | Sort-Object -Property "updatedDateTime" -Descending
+        $revisionList = Invoke-WebRequest -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier)/revisions?api-version=$($apimVersion)" -Headers $headers | ConvertFrom-Json;
+        $revisionList = $revisionList.value | Sort-Object -Property "createdDateTime" -Descending        
 
-        if ($revisionList[-1].isCurrent) {
-            Write-Host "Newest revision is current revision."
-            return;
+        Write-Host "Current revisions:";
+        $revisionList | Format-Table apiRevision, createdDateTime, isOnline, isCurrent;
+
+        if ($revisionList[0].isCurrent) {
+            Write-Host "Newest revision is current revision. Revision: $($revisionList[0].apiRevision)"
+            $isNewestCurrent = $true
+        } else {
+            $revision = $revisionList[0].apiRevision
+            Write-Host "Newest revision: $($revision)";    
         }
-
-        $revision = $revisionList[-1].apiRevision
-        Write-Host "Newest revision: $($revision)";
     }
 
-    Write-Host "Setting revision $($revision) to current";
+    if ($isNewestCurrent -eq $false) {    
+        Write-Host "-----------Setting current revision to $($revision)-----------"
 
-    $releaseId = [guid]::NewGuid()
-    $currentRevReleaseBody = '{"properties":{"apiId":"/apis/' + $($apiVersionIdentifier) + ';rev=' + $($revision) + '","notes":"' + $revisionReleaseNotes + '"}}'
-    $currentRevisionUrl = "$($baseurl)/apis/$($apiVersionIdentifier);rev=$($revision)/releases/$($releaseId)?api-version=$($apimVersion)"
+        $releaseId = [guid]::NewGuid()
+        $currentRevReleaseBody = '{"properties":{"apiId":"/apis/' + $($apiVersionIdentifier) + ';rev=' + $($revision) + '","notes":"' + $revisionReleaseNotes + '"}}'
+        $currentRevisionUrl = "$($baseurl)/apis/$($apiVersionIdentifier);rev=$($revision)/releases/$($releaseId)?api-version=$($apimVersion)"
+    
+        Write-Host "Url: $($currentRevisionUrl)";
+        Write-Host "Body: $($currentRevReleaseBody)";
+    
+        $resp = Invoke-WebRequest -ContentType "application/json" -UseBasicParsing -Uri $currentRevisionUrl -Headers $headers -Method Put -Body $currentRevReleaseBody;
 
-    Write-Host $currentRevisionUrl
-    Write-Host $currentRevReleaseBody
+        $resp | Format-List;
 
-    resp = Invoke-WebRequest -ContentType "application/json" `
-        -UseBasicParsing -Uri $currentRevisionUrl `
-        -Headers $headers `
-        -Method Put `
-        -Body $currentRevReleaseBody
+        Write-Host "----------Current Revision set to $($revision)----------" -ForegroundColor Green
+    }
 
-    Write-Host resp    
+    if ($oldRevisionPolicy -ne "Nothing") {
+        Write-Host "-----------Old Revisions-----------"
+        Write-Host "Getting list of revisions"
 
+        $revisionList = Invoke-WebRequest -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier)/revisions?api-version=$($apimVersion)" -Headers $headers | ConvertFrom-Json;
+        $revisionList = $revisionList.value | Sort-Object -Property "createdDateTime" -Descending;
+
+        $headers["If-match"] = "*"
+
+        $revisionList | Where-Object { $_.isCurrent -eq $false } | ForEach-Object {     
+            $revisionId = $_.apiRevision;
+            if ($oldRevisionPolicy -eq "Offline") {
+                if ($_.isOnline -eq $true) {
+                    # 2020-03 newest version do not have this functionality yet
+                    $resp = Invoke-WebRequest -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier);rev=$($revisionId)?api-version=2018-06-01-preview" -Method Patch -ContentType "application/json" -Headers $headers -Body '{"isOnline":false}';
+                    Write-Host "Revision put offline: $($revisionId)"
+                } else {
+                    Write-Host "Revision is offline: $($revisionId)"
+                }
+            } elseif ($oldRevisionPolicy -eq "Delete") {
+                $resp = Invoke-WebRequest -UseBasicParsing -Uri "$($baseurl)/apis/$($apiVersionIdentifier);rev=$($revisionId)?api-version=$($apimVersion)" -Method Delete -Headers $headers;
+                Write-Host "Revision deleted: $($revisionId)"
+            }
+        }
+        Write-Host "-----------Finished-----------"
+    }
 } finally {
     Trace-VstsLeavingInvocation $MyInvocation
 }
