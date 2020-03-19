@@ -13,7 +13,7 @@
     "version": {
         "Major": "4",
         "Minor": "0",
-        "Patch": "1"
+        "Patch": "2"
     },
     "preview": "true",
     "minimumAgentVersion": "1.95.0",
@@ -97,7 +97,7 @@
             "required": true,
             "helpMarkDown": "Specify exact revision ID to mark as current",
             "defaultValue": "N/A",
-            "visibleRule": "revisionSelectPolicy=Specific"
+            "visibleRule": "RevisionSelectPolicy=Specific"
         },
         {
             "name": "RevisionReleaseNotes",
@@ -106,6 +106,19 @@
             "required": false,
             "helpMarkDown": "Release notes of the revision",
             "defaultValue": "N/A"
+        },
+        {
+            "name": "OldRevisionPolicy",
+            "type": "pickList",
+            "label": "Old revision policy",
+            "required": true,
+            "helpMarkDown": "What to do with old revisions?",
+            "defaultValue": "Nothing",
+            "options": {
+                "Nothing": "Nothing",
+                "Offline": "Take offline",
+                "Delete": "Delete"
+            }
         },
         {
             "name": "MicrosoftApiManagementAPIVersion",
