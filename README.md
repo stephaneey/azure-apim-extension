@@ -1,5 +1,7 @@
 # azure-apim-extension
 Full Azure API Management suite and more VSTS extension
+# License
+This software is under the MIT license terms.
 # Disclaimer
 This software is provided as-is with no warranty of any kind. 
 # API Management Suite in a nutshell
