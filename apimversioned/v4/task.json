@@ -194,9 +194,9 @@
       "name": "version",
       "type": "string",
       "label": "API Version",
-      "required": true,
+      "required": false,
       "helpMarkDown": "API version",
-      "defaultValue": "v1"
+      "defaultValue": ""
     },
     {
       "name": "subscriptionRequired",
