@@ -9,10 +9,10 @@ This task creates a versioned Gateway API against a backend API using the backen
 Prerequisite to using this task: the API Gateway requires connectivity to the backend, so make sure these are either public, either part of a
 shared VNET
 #>	
-
 	    $arm=Get-VstsInput -Name ConnectedServiceNameARM
 		$Endpoint = Get-VstsEndpoint -Name $arm -Require	
 		$Cloud= Get-VstsInput -Name CloudEnvironment
+		$Resource=Get-VstsInput -Name Resource
 		$NewRevision=Get-VstsInput -Name NewRevision
 		$MakeNewRevisionCurrent=Get-VstsInput -Name MakeNewRevisionCurrent
 		$CurrentRevisionNotes=Get-VstsInput -Name CurrentRevisionNotes
@@ -107,11 +107,15 @@ shared VNET
 			$PolicyContent = $PolicyContent.replace("`"","`\`"")
 		}		
 			
+		if($Resource -eq $null -or $Resource -eq "")
+		{
+			$Resource = "https://management.azure.com/"
+		}
 		
 		$client=$Endpoint.Auth.Parameters.ServicePrincipalId
 		$secret=[System.Web.HttpUtility]::UrlEncode($Endpoint.Auth.Parameters.ServicePrincipalKey)
 		$tenant=$Endpoint.Auth.Parameters.TenantId		
-		$body="resource=https%3A%2F%2Fmanagement.azure.com%2F"+
+		$body="resource=$([System.Web.HttpUtility]::UrlEncode($Resource))"+
         "&client_id=$($client)"+
         "&grant_type=client_credentials"+
         "&client_secret=$($secret)"
