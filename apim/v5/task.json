@@ -1,8 +1,8 @@
 {
-  "id": "caee5262-b7ce-48c9-b5f7-70c586148ff8",
-  "name": "apimversioned",
-  "friendlyName": "API Management - Create or Update Versioned API",
-  "description": "API Management - Create or Update Versioned API",
+  "id": "fbb5ba7e-f837-4f46-b31e-f34c117fdd05",
+  "name": "apim",
+  "friendlyName": "API Management - Create or Update API",
+  "description": "API Management - Create or update API",
   "author": "Stephane Eyskens",
   "helpMarkDown": "API Management - Create/Update API",
   "category": "Utility",
@@ -11,9 +11,9 @@
   ],
   "demands": [],
   "version": {
-    "Major": "4",
-    "Minor": "1",
-    "Patch": "2"
+    "Major": "5",
+    "Minor": "0",
+    "Patch": "1"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Create/Update API $(message)",
@@ -25,19 +25,7 @@
       "defaultValue": "",
       "required": true,
       "helpMarkDown": "Azure Resource Manager subscription to configure before running PowerShell"
-    },
-    {
-      "name":"CloudEnvironment",
-      "type":"string",
-      "label":"Azure Cloud",
-      "defaultValue":"https://login.windows.net/",
-      "required":true,
-      "helpMarkDown": "Keep the default if you're not using a Sovereign Cloud",
-      "options": {
-        "China": "https://login.chinacloudapi.cn",
-        "US Gov.":"https://login.microsoftonline.us",
-        "Germany":"https://login.microsoftonline.de"        
-      }
+
     },
     {
       "name": "ResourceGroupName",
@@ -58,6 +46,23 @@
       "properties": {
         "EditableOptions": "True"
       }
+    },
+    {
+      "name": "UseProductCreatedByPreviousTask",
+      "type": "boolean",
+      "label": "Product created by previous task",
+      "helpMarkDown": "Make sure the task that creates/updates the product is not disabled and that it is executed by the same agent."
+    },
+    {
+      "name": "product1",
+      "type": "multiline",
+      "label": "Product(s)",
+      "required": true,
+      "helpMarkDown": "Product(s) you want to add the API to. One product per line.",
+      "properties": {
+        "EditableOptions": "True"
+      },
+      "visibleRule": "UseProductCreatedByPreviousTask=false"
     },
     {
       "name": "OpenAPISpec",
@@ -82,24 +87,7 @@
         "json": "json",
         "yaml":"yaml"        
       },
-      "visibleRule": "OpenAPISpec=v3"
-    },
-    {
-      "name": "UseProductCreatedByPreviousTask",
-      "type": "boolean",
-      "label": "Product created by previous task",
-      "helpMarkDown": "Make sure the task that creates/updates the product is not disabled and that it is executed by the same agent."
-    },
-    {
-      "name": "product1",
-      "type": "multiline",
-      "label": "Product(s)",
-      "required": true,
-      "helpMarkDown": "Product(s) you want to add the API to. One product per line.",
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "visibleRule": "UseProductCreatedByPreviousTask=false"
+     "visibleRule": "OpenAPISpec=v3"
     },
     {
       "name": "Authorization",
@@ -112,9 +100,6 @@
         "None": "None",
         "OAuth":"OAuth",
         "OpenID":"OpenID Connect"
-      },
-      "properties": {
-        "EditableOptions": "True"
       }
     },
     {
@@ -150,15 +135,12 @@
         "Url": "Url",
         "Code":"Code",
         "Artifact":"Build Artifact"
-      },
-      "properties": {
-        "EditableOptions": "True"
       }
-    },    
+    },
     {
       "name": "swaggerlocation",
       "type": "string",
-      "label": "API Definition Location URL",
+      "label": "Definition Location URL",
       "required": true,
       "helpMarkDown": "Make sure the URL is connectable from the build servers",
       "defaultValue": "",
@@ -167,16 +149,16 @@
     {
       "name": "swaggerartifact",
       "type": "string",
-      "label": "API Definition Artifact",
+      "label": "Definition Artifact",
       "required": true,
-      "helpMarkDown": "API Definition Artifact. For instance $(System.DefaultWorkingDirectory)/<yourswagger.json>",
+      "helpMarkDown": "Definition Artifact. For instance $(System.DefaultWorkingDirectory)/<yourswagger.json>",
       "defaultValue": "",
       "visibleRule": "SwaggerPicker=Artifact"
     },
     {
       "name": "swaggercode",
       "type": "multiline",
-      "label": "API Definition Body",
+      "label": "Definition body",
       "required": true,
       "helpMarkDown": "Insert the full API definition",
       "defaultValue": "",
@@ -188,14 +170,20 @@
       "label": "API Name",
       "required": true,
       "helpMarkDown": "New or existing API"
+
     },
     {
-      "name": "version",
+      "name": "DisplayName",
       "type": "string",
-      "label": "API Version",
+      "label": "API Display Name",      
+      "helpMarkDown": "Leave it blank to reuse the name"
+    },
+    {
+      "name": "pathapi",
+      "type": "string",
+      "label": "API URL suffix",
       "required": true,
-      "helpMarkDown": "API version",
-      "defaultValue": "v1"
+      "helpMarkDown": "API URL suffix"
     },
     {
       "name": "subscriptionRequired",
@@ -203,81 +191,6 @@
       "label": "Subscription Required",
       "helpMarkDown": "Subscription key is required to access this API",
       "defaultValue":true
-    },
-    {
-      "name": "NewRevision",
-      "type": "boolean",
-      "label": "Create a new revision",
-      "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
-      "defaultValue":true
-    },
-    {
-      "name": "MakeNewRevisionCurrent",
-      "type": "boolean",
-      "label": "Make the new revision current",
-      "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
-      "defaultValue":false,
-      "visibleRule": "NewRevision=true"
-    },
-    {
-      "name": "CurrentRevisionNotes",
-      "type": "string",
-      "label": "Notes to push to Change Feed",
-      "required": false,
-      "helpMarkDown": "Release notes of the new revision",
-      "defaultValue": "N/A",
-      "visibleRule": "MakeNewRevisionCurrent=true"
-    },
-    {
-      "name": "apiRevisionDescription",
-      "type": "string",
-      "label": "API revision description",
-      "required": true,
-      "helpMarkDown": "Release notes of the new revision",
-      "defaultValue": "N/A",
-      "visibleRule": "NewRevision=true"
-    },
-    {
-      "name": "scheme",
-      "type": "pickList",
-      "label": "Versioning scheme",
-      "required": true,
-      "helpMarkDown": "How should the API version be transmitted by consumers",
-      "defaultValue": "Path",
-      "options": {
-        "Path": "Path",
-        "Header":"Header",
-        "Query":"Query String"
-      },
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "visibleRule": "version=v1"
-    },    
-    {
-      "name": "VersionHeader",
-      "type": "string",
-      "label": "Version Header",
-      "required": true,
-      "helpMarkDown": "Version Header",
-      "defaultValue": "Api-Version",
-      "visibleRule": "scheme = Header && version=v1"
-    },
-    {
-      "name": "QueryParam",
-      "type": "string",
-      "label": "Version query parameter",
-      "required": true,
-      "helpMarkDown": "Version query parameter",
-      "defaultValue": "api-version",
-      "visibleRule": "scheme = Query && version=v1"
-    },
-    {
-      "name": "pathapi",
-      "type": "string",
-      "label": "API URL suffix",
-      "required": false,
-      "helpMarkDown": "API URL suffix"
     },
     {
       "name": "TemplateSelector",
@@ -288,7 +201,8 @@
       "defaultValue": "None",
       "options": {
         "None": "None",
-        "CacheLookup": "Cache Lookup",
+        "Artifact":"Artifact",
+        "CacheLookup": "Cache lookup",
         "CORS": "CORS",
         "Custom": "Custom",
         "Basic": "Basic",
@@ -297,18 +211,23 @@
         "RateByKey": "RateByKey",
         "QuotaByKey": "QuotaByKey",
         "HeaderCheck": "HeaderCheck"
-      },
-      "properties": {
-        "EditableOptions": "True"
       }
-    },
+    },    
     {
       "name": "None",
-      "type": "multiLine",
+      "type": "string",
       "label": "None",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "helpMarkDown": "",
       "visibleRule": "TemplateSelector = NAN"
+    },
+    {
+      "name": "policyArtifact",
+      "type": "string",
+      "label": "Policy Artifact",
+      "helpMarkDown": "Policy Artifact. For instance $(System.DefaultWorkingDirectory)/<yourpolicy.xml>",
+      "defaultValue": "",
+      "visibleRule": "TemplateSelector = Artifact"
     },
     {
       "name": "Custom",
@@ -320,16 +239,16 @@
     },
     {
       "name": "CacheLookup",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
-      "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t\t<cache-store duration='3600' />\n\t </outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t\t<cache-store duration='3600' />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
       "helpMarkDown": "Default Cache Lookup Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
       "visibleRule": "TemplateSelector = CacheLookup"
     },
     {
       "name": "Basic",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<authentication-basic username='username' password='password' />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -338,7 +257,7 @@
     },
     {
       "name": "CORS",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<cors>\n\t\t\t<allowed-origins><origin>*</origin></allowed-origins>\n\t\t\t<allowed-methods><method>*</method></allowed-methods>\n\t\t\t<allowed-headers><header>*</header></allowed-headers>\n\t\t</cors>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -347,7 +266,7 @@
     },
     {
       "name": "JWT",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<validate-jwt header-name='Insert HTTP Header Name here' failed-validation-httpcode='401' failed-validation-error-message='Unauthorized'>\n\t\t\t<issuer-signing-keys><key>Base64 Encoded Key 1</key>\n\t\t\t</issuer-signing-keys>\n\t\t\t<audiences><audience>Audience 1</audience>\n\t\t\t</audiences>\n\t\t<issuers>\n\t\t\t<issuer>Issuer 1</issuer>\n\t\t</issuers>\n\t\t<required-claims><claim name='claim1' match='all'><value>value1</value><value>value2</value></claim>\n\t\t\t</required-claims>\n\t\t</validate-jwt>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -356,7 +275,7 @@
     },
     {
       "name": "IP",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<ip-filter action='allow | forbid'>\n\t\t\t<address>address</address>\n\t\t\t<address-range from='address' to='address' />\n\t\t</ip-filter>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -365,7 +284,7 @@
     },
     {
       "name": "RateByKey",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<rate-limit-by-key calls='5' renewal-period='60' counter-key='@(context.Request.IpAddress)'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -374,7 +293,7 @@
     },
     {
       "name": "QuotaByKey",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<quota-by-key calls='10000' bandwidth='40000' renewal-period='3600'/>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -383,7 +302,7 @@
     },
     {
       "name": "HeaderCheck",
-      "type": "multiLine",
+      "type": "multiline",
       "label": "Policy",
       "defaultValue": "<policies>\n\t<inbound>\n\t\t<check-header name='header name' failed-check-httpcode='http status code to return on failure' failed-check-error-message='error message to return' ignore-case='true | false'>\n\t\t\t<value>value</value>\n\t\t</check-header>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
@@ -396,15 +315,15 @@
       "label": "Microsoft API Version",
       "required": true,
       "helpMarkDown": "Which version of the Management API should be used?",
-      "defaultValue": "2019-01-01",
-      "options": {                
-        "2019-01-01":"2019-01-01"
+      "defaultValue": "2017-03-01",
+      "options": {
+        "2017-03-01": "2017-03-01",
+        "2018-01-01":"2018-01-01"
       },
       "properties": {
         "EditableOptions": "True"
       }
     }
-
   ],
   "dataSourceBindings": [
     {
@@ -442,11 +361,11 @@
       "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/openidConnectProviders?api-version=2018-01-01",
       "resultSelector": "jsonpath:$.value[*]",
       "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
-    }    
+    }     
   ],
   "execution": {
     "PowerShell3": {
-      "target": "apimversioned.ps1"
+      "target": "apim.ps1"
     }
   }
 }
