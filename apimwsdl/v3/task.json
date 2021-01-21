@@ -1,22 +1,22 @@
 {
-  "id": "caee5262-b7ce-48c9-b5f7-70c586148ff8",
-  "name": "apimversioned",
-  "friendlyName": "API Management - Create or Update Versioned API",
-  "description": "API Management - Create or Update Versioned API",
+  "id": "9bfd810a-5e2b-4871-95d8-ae6e677d4224",
+  "name": "apimwsdl",
+  "friendlyName": "API Management - Create or Update API from WSDL",
+  "description": "API Management - Create or update API from WSDL",
   "author": "Stephane Eyskens",
-  "helpMarkDown": "API Management - Create/Update API",
+  "helpMarkDown": "API Management - Create/Update API from WSDL",
   "category": "Utility",
   "visibility": [
     "Release"
   ],
   "demands": [],
   "version": {
-    "Major": "4",
-    "Minor": "1",
-    "Patch": "2"
+    "Major": "3",
+    "Minor": "0",
+    "Patch": "1"
   },
   "minimumAgentVersion": "1.95.0",
-  "instanceNameFormat": "API Management - Create/Update API $(message)",
+  "instanceNameFormat": "API Management - Create/Update API from WSDL $(message)",
   "inputs": [
     {
       "name": "ConnectedServiceNameARM",
@@ -25,19 +25,7 @@
       "defaultValue": "",
       "required": true,
       "helpMarkDown": "Azure Resource Manager subscription to configure before running PowerShell"
-    },
-    {
-      "name":"CloudEnvironment",
-      "type":"string",
-      "label":"Azure Cloud",
-      "defaultValue":"https://login.windows.net/",
-      "required":true,
-      "helpMarkDown": "Keep the default if you're not using a Sovereign Cloud",
-      "options": {
-        "China": "https://login.chinacloudapi.cn",
-        "US Gov.":"https://login.microsoftonline.us",
-        "Germany":"https://login.microsoftonline.de"        
-      }
+
     },
     {
       "name": "ResourceGroupName",
@@ -60,31 +48,6 @@
       }
     },
     {
-      "name": "OpenAPISpec",
-      "type": "pickList",
-      "label": "OpenAPI Version",
-      "required": true,
-      "helpMarkDown": "Target Open API version.",
-      "defaultValue": "v2",
-      "options": {
-        "v2": "v2",
-        "v3":"v3"        
-      }
-    },
-    {
-      "name": "Format",
-      "type": "pickList",
-      "label": "API definition format",
-      "required": true,
-      "helpMarkDown": "API definition format",
-      "defaultValue": "json",
-      "options": {
-        "json": "json",
-        "yaml":"yaml"        
-      },
-      "visibleRule": "OpenAPISpec=v3"
-    },
-    {
       "name": "UseProductCreatedByPreviousTask",
       "type": "boolean",
       "label": "Product created by previous task",
@@ -102,85 +65,43 @@
       "visibleRule": "UseProductCreatedByPreviousTask=false"
     },
     {
-      "name": "Authorization",
+      "name": "soapApiType",
       "type": "pickList",
-      "label": "Authorization",
+      "label": "Type of Api to create",
       "required": true,
-      "helpMarkDown": "Enable Authorization for the developer portal",
-      "defaultValue": "None",
+      "helpMarkDown": "Type of Api to create.",
+      "defaultValue": "soap",
       "options": {
-        "None": "None",
-        "OAuth":"OAuth",
-        "OpenID":"OpenID Connect"
+        "soap":"SOAP pass-through API",
+        "http": "SOAP to REST API"
       },
       "properties": {
         "EditableOptions": "True"
       }
     },
     {
-      "name": "oauth",
-      "type": "pickList",
-      "label": "Authorization server",
-      "required": false,
-      "helpMarkDown": "Authorization server to associate to the API",
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "visibleRule": "Authorization=OAuth"
-    },
-    {
-      "name": "oid",
-      "type": "pickList",
-      "label": "OpenID Connect",
-      "required": false,
-      "helpMarkDown": "OpenID provider to associate to the API",
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "visibleRule": "Authorization=OpenID"
-    },
-    {
-      "name": "SwaggerPicker",
-      "type": "pickList",
-      "label": "Definition location",
-      "required": true,
-      "helpMarkDown": "Where is the API definition?",
-      "defaultValue": "Url",
-      "options": {
-        "Url": "Url",
-        "Code":"Code",
-        "Artifact":"Build Artifact"
-      },
-      "properties": {
-        "EditableOptions": "True"
-      }
-    },    
-    {
-      "name": "swaggerlocation",
+      "name": "wsdllocation",
       "type": "string",
-      "label": "API Definition Location URL",
+      "label": "WSDL Location URL",
       "required": true,
       "helpMarkDown": "Make sure the URL is connectable from the build servers",
-      "defaultValue": "",
-      "visibleRule": "SwaggerPicker=Url"
+      "defaultValue": ""
     },
     {
-      "name": "swaggerartifact",
+      "name": "wsdlServiceName",
       "type": "string",
-      "label": "API Definition Artifact",
+      "label": "Service Name",
       "required": true,
-      "helpMarkDown": "API Definition Artifact. For instance $(System.DefaultWorkingDirectory)/<yourswagger.json>",
-      "defaultValue": "",
-      "visibleRule": "SwaggerPicker=Artifact"
+      "helpMarkDown": "Name of the service as described in the WSDL",
+      "defaultValue": ""
     },
     {
-      "name": "swaggercode",
-      "type": "multiline",
-      "label": "API Definition Body",
+      "name": "wsdlEndpointName",
+      "type": "string",
+      "label": "Service Endpoint",
       "required": true,
-      "helpMarkDown": "Insert the full API definition",
-      "defaultValue": "",
-      "visibleRule": "SwaggerPicker=Code"
+      "helpMarkDown": "Name of endpoint(port) to import from WSDL.",
+      "defaultValue": ""
     },
     {
       "name": "targetapi",
@@ -190,93 +111,17 @@
       "helpMarkDown": "New or existing API"
     },
     {
-      "name": "version",
-      "type": "string",
-      "label": "API Version",
-      "required": true,
-      "helpMarkDown": "API version",
-      "defaultValue": "v1"
-    },
-    {
-      "name": "subscriptionRequired",
-      "type": "boolean",
-      "label": "Subscription Required",
-      "helpMarkDown": "Subscription key is required to access this API",
-      "defaultValue":true
-    },
-    {
-      "name": "NewRevision",
-      "type": "boolean",
-      "label": "Create a new revision",
-      "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
-      "defaultValue":true
-    },
-    {
-      "name": "MakeNewRevisionCurrent",
-      "type": "boolean",
-      "label": "Make the new revision current",
-      "helpMarkDown": "When set to false, overwrite the current revision if no new version specified, else create a new one",
-      "defaultValue":false,
-      "visibleRule": "NewRevision=true"
-    },
-    {
-      "name": "CurrentRevisionNotes",
-      "type": "string",
-      "label": "Notes to push to Change Feed",
-      "required": false,
-      "helpMarkDown": "Release notes of the new revision",
-      "defaultValue": "N/A",
-      "visibleRule": "MakeNewRevisionCurrent=true"
-    },
-    {
-      "name": "apiRevisionDescription",
-      "type": "string",
-      "label": "API revision description",
-      "required": true,
-      "helpMarkDown": "Release notes of the new revision",
-      "defaultValue": "N/A",
-      "visibleRule": "NewRevision=true"
-    },
-    {
-      "name": "scheme",
-      "type": "pickList",
-      "label": "Versioning scheme",
-      "required": true,
-      "helpMarkDown": "How should the API version be transmitted by consumers",
-      "defaultValue": "Path",
-      "options": {
-        "Path": "Path",
-        "Header":"Header",
-        "Query":"Query String"
-      },
-      "properties": {
-        "EditableOptions": "True"
-      },
-      "visibleRule": "version=v1"
-    },    
-    {
-      "name": "VersionHeader",
-      "type": "string",
-      "label": "Version Header",
-      "required": true,
-      "helpMarkDown": "Version Header",
-      "defaultValue": "Api-Version",
-      "visibleRule": "scheme = Header && version=v1"
-    },
-    {
-      "name": "QueryParam",
-      "type": "string",
-      "label": "Version query parameter",
-      "required": true,
-      "helpMarkDown": "Version query parameter",
-      "defaultValue": "api-version",
-      "visibleRule": "scheme = Query && version=v1"
+      "name": "Description",
+      "type": "multiLine",
+      "label": "Description",
+      "helpMarkDown": "Description appearing to subscribers",
+      "required": true
     },
     {
       "name": "pathapi",
       "type": "string",
       "label": "API URL suffix",
-      "required": false,
+      "required": true,
       "helpMarkDown": "API URL suffix"
     },
     {
@@ -288,7 +133,8 @@
       "defaultValue": "None",
       "options": {
         "None": "None",
-        "CacheLookup": "Cache Lookup",
+        "Artifact":"Artifact",
+        "CacheLookup": "Cache lookup",
         "CORS": "CORS",
         "Custom": "Custom",
         "Basic": "Basic",
@@ -311,6 +157,14 @@
       "visibleRule": "TemplateSelector = NAN"
     },
     {
+      "name": "policyArtifact",
+      "type": "string",
+      "label": "Policy Artifact",
+      "helpMarkDown": "Policy Artifact. For instance $(System.DefaultWorkingDirectory)/<yourpolicy.xml>",
+      "defaultValue": "",
+      "visibleRule": "TemplateSelector = Artifact"
+    },
+    {
       "name": "Custom",
       "type": "multiline",
       "label": "None",
@@ -322,7 +176,7 @@
       "name": "CacheLookup",
       "type": "multiLine",
       "label": "Policy",
-      "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t\t<cache-store duration='3600' />\n\t </outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
+      "defaultValue": "<policies>\n\t<inbound>\n\t\t\t<cache-lookup vary-by-developer='false' vary-by-developer-groups='false'>\n\t\t\t\t<vary-by-header>Accept</vary-by-header>\n\t\t\t\t<vary-by-header>Accept-Charset</vary-by-header>\n\t\t\t</cache-lookup>\n\t\t<base />\n\t</inbound>\n\t<backend>\n\t\t<base />\n\t</backend>\n\t<outbound>\n\t\t<base />\n\t</outbound>\n\t<on-error>\n\t\t<base />\n\t</on-error>\n</policies>",
       "required": false,
       "helpMarkDown": "Default Cache Lookup Policy. Mind that this will replace any existing policy for that API. Add other policies manually if necessary!",
       "visibleRule": "TemplateSelector = CacheLookup"
@@ -396,15 +250,15 @@
       "label": "Microsoft API Version",
       "required": true,
       "helpMarkDown": "Which version of the Management API should be used?",
-      "defaultValue": "2019-01-01",
-      "options": {                
-        "2019-01-01":"2019-01-01"
+      "defaultValue": "2017-03-01",
+      "options": {
+        "2017-03-01": "2017-03-01",
+        "2018-01-01":"2018-01-01"
       },
       "properties": {
         "EditableOptions": "True"
       }
     }
-
   ],
   "dataSourceBindings": [
     {
@@ -428,25 +282,11 @@
       "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/products?api-version=2017-03-01",
       "resultSelector": "jsonpath:$.value[*]",
       "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
-    },
-    {
-      "target": "oauth",
-      "endpointId": "$(ConnectedServiceNameARM)",
-      "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/authorizationServers?api-version=2018-01-01",
-      "resultSelector": "jsonpath:$.value[*]",
-      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
-    },
-    {
-      "target": "oid",
-      "endpointId": "$(ConnectedServiceNameARM)",
-      "endpointUrl": "{{endpoint.url}}/subscriptions/{{endpoint.subscriptionId}}/resourceGroups/$(ResourceGroupName)/providers/Microsoft.ApiManagement/service/$(ApiPortalName)/openidConnectProviders?api-version=2018-01-01",
-      "resultSelector": "jsonpath:$.value[*]",
-      "resultTemplate": "{\"Value\" : \"{{{name}}}\", \"DisplayValue\" : \"{{{properties.displayName}}}\" }"
     }    
   ],
   "execution": {
     "PowerShell3": {
-      "target": "apimversioned.ps1"
+      "target": "apimwsdl.ps1"
     }
   }
 }
