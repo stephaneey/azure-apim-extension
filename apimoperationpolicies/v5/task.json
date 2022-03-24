@@ -58,6 +58,12 @@
       }
     },
     {
+      "name": "UseApiCreatedByPreviousTask",
+      "type": "boolean",
+      "label": "Operation(s) created by previous task",
+      "helpMarkDown": "Make sure the task that creates/updates the api(s) is not disabled and that it is executed by the same agent."
+    },
+    {
       "name": "OperationName",
       "type": "pickList",
       "label": "Operation",
@@ -65,7 +71,8 @@
       "helpMarkDown": "The operation you want to set or create policy",
       "properties": {
         "EditableOptions": "True"
-      }
+      },
+      "visibleRule": "UseApiCreatedByPreviousTask=false"
     },
     {
       "name": "CurrentRevision",
