@@ -13,7 +13,7 @@
   "version": {
     "Major": "5",
     "Minor": "0",
-    "Patch": "1"
+    "Patch": "2"
   },
   "minimumAgentVersion": "1.95.0",
   "instanceNameFormat": "API Management - Set or update an operation policy $(message)",
@@ -48,6 +48,12 @@
       }
     },
     {
+      "name": "UseApiCreatedByPreviousTask",
+      "type": "boolean",
+      "label": "Operation(s) created by previous task",
+      "helpMarkDown": "Make sure the task that creates/updates the api(s) is not disabled and that it is executed by the same agent."
+    },
+    {
       "name": "ApiName",
       "type": "pickList",
       "label": "API",
@@ -55,13 +61,8 @@
       "helpMarkDown": "The API you want to list operations",
       "properties": {
         "EditableOptions": "True"
-      }
-    },
-    {
-      "name": "UseApiCreatedByPreviousTask",
-      "type": "boolean",
-      "label": "Operation(s) created by previous task",
-      "helpMarkDown": "Make sure the task that creates/updates the api(s) is not disabled and that it is executed by the same agent."
+      },
+      "visibleRule": "UseApiCreatedByPreviousTask=false"
     },
     {
       "name": "OperationName",

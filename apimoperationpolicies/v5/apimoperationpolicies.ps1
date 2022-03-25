@@ -97,6 +97,35 @@ This task creates an APIM product.
 	{		
 		try
 		{
+			if($UseApiCreatedByPreviousTask -eq $true)
+			{
+				if ($null -eq $env:NewUpdatedApi)
+				{
+					throw "There was no operations created by a previous task"
+				}
+				
+				try
+				{
+					$api = $env:NewUpdatedApi
+
+					Write-Host "Listing operations from $($api)"
+
+					$apioperationsurl = "$($baseurl)/apis/$($api);rev=$($rev)/operations?api-version=2017-03-01"
+
+					$operationsData = Invoke-RestMethod -UseBasicParsing -Uri $apioperationsurl -Headers $headers -Method Get
+
+					$operations = $operationsData.value | Select-Object -ExpandProperty name
+	
+					Write-Host "Number of operations created by a previous task(s): $($operations.Length)"
+				}
+				catch [System.Net.WebException] 
+				{
+					$er=$_.ErrorDetails.Message.ToString()|ConvertFrom-Json
+					Write-Host $er.error.details
+					throw
+				}
+			}
+
 			$RevisionUrl="$($baseurl)/apis/$($api)/revisions?api-version=2019-01-01"
 			Write-Host "Revision Url is $($RevisionUrl)"
 			$revisions=Invoke-WebRequest -UseBasicParsing -Uri $RevisionUrl -Headers $headers|ConvertFrom-Json
@@ -116,39 +145,6 @@ This task creates an APIM product.
 				$rev=$revisions.count
 			}
 
-			if($UseApiCreatedByPreviousTask -eq $true)
-			{
-				if ($null -eq $env:NewUpdatedApi)
-				{
-					throw "There was no operations created by a previous task"
-				}
-				
-				try
-				{
-					$api = $env:NewUpdatedApi
-
-					Write-Host "Listing operations from $($api)"
-
-					$apioperationsurl = "$($baseurl)/apis/$($api);rev=$($rev)/operations/$($operation)?api-version=2017-03-01"
-
-					$operationsData = Invoke-RestMethod -UseBasicParsing -Uri $apioperationsurl -Headers $headers -Method Get
-
-					$operations = $operationsData.value | Select-Object -ExpandProperty name
-	
-					if ($operations.Length -le 0)
-					{
-						$operations = $env:NewUpdatedApi
-					}
-	
-					Write-Host "Number of operations created by a previous task(s): $($operations.Length)"
-				}
-				catch [System.Net.WebException] 
-				{
-					$er=$_.ErrorDetails.Message.ToString()|ConvertFrom-Json
-					Write-Host $er.error.details
-					throw
-				}
-			}
 			
 			Write-Host "Revision to patch is $($rev)"
 			
