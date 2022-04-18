@@ -321,7 +321,8 @@ shared VNET
 			{
 				$policyapiurl=	"$($baseurl)/apis/$($newapi)/policies/policy?api-version=$($MicrosoftApiManagementAPIVersion)"
 				$JsonPolicies = "{
-				  `"properties`": {					
+				  `"properties`": {
+				        `"format`":`"rawxml`",  
 					`"policyContent`":`""+$PolicyContent+"`"
 					}
 				}"
