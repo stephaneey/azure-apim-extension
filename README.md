@@ -1,7 +1,8 @@
+
 # azure-apim-extension
 Full Azure API Management suite and more VSTS extension
 # Disclaimer
-This software is provided as-is with no warranty of any kind. 
+THE PROJECT IS NOT MAINTAINED ANYMORE. THIS EXTENSION WAS CREATED AT A TIME WHERE NO REAL USABLE ALTERNATIVE WAS AVAILABLE. TODAY, YOU CAN NATIVELY USE TERRAFORM AND BICEP TO TACKLE THIS.
 # API Management Suite in a nutshell
 The purpose of this extension is to bring Azure API Management into VSTS as part of your release lifecyle. Whether you use API Management to monetize APIS or for internal purposes, it
 is good to associate the release of your backends APIs with their corresponding facade APIs published against the API Gateway. On top of the API Management integration, the extension also 
