@@ -9,6 +9,8 @@ is good to associate the release of your backends APIs with their corresponding 
 ships with an API Security Checker that helps validating that all endpoints of an API are well secured, this is of course only applicable to non-public APIs.
 # Release Notes
 ## v3.5.2
+* Added the possibility to use previously created / updated operations - Serge Aradj
+## v3.5.1
 * Addition of the subscription flag to non-versioned APIs - Sorin Pasa
 * Possibility to support non-commercial endpoint - Joey Eng
 ## v3.5.0

@@ -11,7 +11,8 @@ This task creates an APIM product.
 	$portal=Get-VstsInput -Name ApiPortalName
 	$rg=Get-VstsInput -Name ResourceGroupName
 	$api=Get-VstsInput -Name ApiName
-	$operation=Get-VstsInput -Name OperationName
+	$operations=@(Get-VstsInput -Name OperationName)
+	$UseApiCreatedByPreviousTask=Get-VstsInput -Name UseApiCreatedByPreviousTask
 	$SelectedTemplate=Get-VstsInput -Name TemplateSelector
 	$CurrentRevision=Get-VstsInput -Name CurrentRevision
 	
@@ -96,6 +97,35 @@ This task creates an APIM product.
 	{		
 		try
 		{
+			if($UseApiCreatedByPreviousTask -eq $true)
+			{
+				if ($null -eq $env:NewUpdatedApi)
+				{
+					throw "There was no operations created by a previous task"
+				}
+				
+				try
+				{
+					$api = $env:NewUpdatedApi
+
+					Write-Host "Listing operations from $($api)"
+
+					$apioperationsurl = "$($baseurl)/apis/$($api);rev=$($rev)/operations?api-version=2017-03-01"
+
+					$operationsData = Invoke-RestMethod -UseBasicParsing -Uri $apioperationsurl -Headers $headers -Method Get
+
+					$operations = $operationsData.value | Select-Object -ExpandProperty name
+	
+					Write-Host "Number of operations created by a previous task(s): $($operations.Length)"
+				}
+				catch [System.Net.WebException] 
+				{
+					$er=$_.ErrorDetails.Message.ToString()|ConvertFrom-Json
+					Write-Host $er.error.details
+					throw
+				}
+			}
+
 			$RevisionUrl="$($baseurl)/apis/$($api)/revisions?api-version=2019-01-01"
 			Write-Host "Revision Url is $($RevisionUrl)"
 			$revisions=Invoke-WebRequest -UseBasicParsing -Uri $RevisionUrl -Headers $headers|ConvertFrom-Json
@@ -114,16 +144,22 @@ This task creates an APIM product.
 			else {
 				$rev=$revisions.count
 			}
+
+			
 			Write-Host "Revision to patch is $($rev)"
-			$policyapiurl=	"$($baseurl)/apis/$($api);rev=$($rev)/operations/$($operation)/policies/policy?api-version=2017-03-01"
-			$JsonPolicies = "{
-				`"properties`": {					
-				`"policyContent`":`""+$PolicyContent+"`"
-				}
-			}"
-			Write-Host "Linking policy to API USING $($policyapiurl)"
-			Write-Host $JsonPolicies
-			Invoke-WebRequest -UseBasicParsing -Uri $policyapiurl -Headers $headers -Method Put -Body $JsonPolicies -ContentType "application/json"
+			
+			foreach ($operation in $operations)
+			{
+				$policyapiurl=	"$($baseurl)/apis/$($api);rev=$($rev)/operations/$($operation)/policies/policy?api-version=2017-03-01"
+				$JsonPolicies = "{
+					`"properties`": {					
+						`"policyContent`":`""+$PolicyContent+"`"
+					}
+				}"
+				Write-Host "Linking policy to API USING $($policyapiurl)"
+				Write-Host $JsonPolicies
+				Invoke-WebRequest -UseBasicParsing -Uri $policyapiurl -Headers $headers -Method Put -Body $JsonPolicies -ContentType "application/json"
+			}
 		}
 		catch [System.Net.WebException] 
 		{

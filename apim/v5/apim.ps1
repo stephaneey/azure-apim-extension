@@ -294,6 +294,8 @@ shared VNET
 			Write-Host "Number of products created by a previous task(s): $($products.Length)"
 		}
 
+		Write-Host ("##vso[task.setvariable variable=NewUpdatedApi;]$newapi")
+
 		foreach ($product in $products)
 		{
 			if($product -ne $null -and $product -ne "")
