@@ -96,10 +96,11 @@ shared VNET
 			try
 			{
 				$baseurl="$($Endpoint.Url)subscriptions/$($Endpoint.Data.SubscriptionId)/resourceGroups/$($rg)/providers/Microsoft.ApiManagement/service/$($portal)"
-				$policyapiurl=	"$($baseurl)/policies/policy?api-version=2018-06-01-preview"
+				$policyapiurl=	"$($baseurl)/policies/policy?api-version=2021-08-01"
 				$JsonPolicies = "{
-				  `"properties`": {					
-					`"policyContent`":`""+$PolicyContent+"`"
+				  `"properties`": {
+      					`"format`":`"xml`"
+					`"value`":`""+$PolicyContent+"`"
 					}
 				}"
 				Write-Host "Creating or updating global policy $($policyapiurl)"
