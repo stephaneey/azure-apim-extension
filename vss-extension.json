@@ -2,8 +2,8 @@
   "manifestVersion": 1,
   "id": "apim",
   "name": "API Management Suite",
-  "version": "3.5.2",
-  "publisher": "stephane-eyskens",
+  "version": "3.5.3",
+  "publisher": "velocity-cubed",
   "tags": [
     "API",
     "Security"
@@ -16,10 +16,10 @@
   "public": true,
   "links": {
     "getstarted": {
-      "uri": "https://github.com/stephaneey/azure-apim-extension"
+      "uri": "https://github.com/VelocityCubed/azure-apim-extension"
     },
     "support": {
-      "uri": "https://github.com/stephaneey/azure-apim-extension/issues"
+      "uri": "https://github.com/VelocityCubed/azure-apim-extension/issues"
     }
   },
   "targets": [
